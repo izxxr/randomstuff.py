@@ -6,6 +6,12 @@ An easy to use python API wrapper for the Random Stuff API.
 - Supports both v2 and v3 versions of API
 - Supports all type of API plans
 
+## Installation
+Installation can be done easily using the python package manager `pip`
+```bash
+pip install randomstuff.py
+```
+
 ## Quickstart
 Firstly make sure to [get the API key from here](https://api.pgamerx.com/register)
 
