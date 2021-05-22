@@ -16,6 +16,5 @@ from .constants import *
 
 __author__ = 'nerdguyahmad'
 __version__ = '1.2.0'
-__version__ = '1.0.0a'
 __license__ = 'MIT'
 __copyright__ = '2021-present nerdguyahmad.'
