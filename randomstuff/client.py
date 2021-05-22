@@ -18,7 +18,7 @@ class Client:
 	get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
 	get_image(type: str = 'any'): Get random image.
 	get_joke(type: str = 'any'): Get random joke.
-	
+
 	"""
 	def __init__(self, key: str):
 		self.key = key
@@ -96,12 +96,19 @@ class Client:
 		self.session.close()
 
 class AsyncClient:
-	"""Represent a client
+	"""Represent an async client. This is same as `randomstuff.Client` but is suitable for async programs.
 	
 	Parameters
 	----------
 	key (str): Your API authentication key.
 
+	Methods 
+	-------
+
+	async get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
+	async get_image(type: str = 'any'): Get random image.
+	async get_joke(type: str = 'any'): Get random joke.
+	
 	"""
 	def __init__(self, key: str):
 		self.key = key
@@ -136,7 +143,8 @@ class AsyncClient:
 		return (await response.json())[0]['message']
 
 	async def get_image(self, type: str = 'any'):
-		"""Gets an image
+		"""
+		Gets an image
 
 		Parameters:
 			type (str) (optional): The type of image. By default, it is 'any'.
