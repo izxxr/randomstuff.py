@@ -39,7 +39,7 @@ import randomstuff
 
 client = randomstuff.Client(key='api-key-here')
 
-response = client.get_joke(type="any")
+response = client.get_image(type="any")
 client.close()
 print(response)
 ```
