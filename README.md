@@ -43,6 +43,7 @@ print(response)
 This library also supports async usage.
 ```py
 import randomstuff
+import asyncio
 
 client = randomstuff.AsyncClient()
 
@@ -50,4 +51,7 @@ def coro():
   response = await client.get_ai_response("Hello world")
   await client.close()  
   print(response)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(coro())
 ```
