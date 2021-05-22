@@ -6,7 +6,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
 	name='randomstuff.py',
-	version='1.0.0',
+	version='1.0.2',
 	description='An easy to use python API wrapper for Random Stuff API.',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
@@ -15,7 +15,7 @@ setup(
 	author_email='nerdguyahmad.contact@gmain.com',
 	license='MIT',
 	classifiers=[
-	'Development Status :: 4 - Beta',
+	'Development Status :: 3 - Alpha',
 	'Intended Audience :: Developers',
     'Topic :: Software Development :: Build Tools',
     'License :: OSI Approved :: MIT License',
@@ -28,13 +28,13 @@ setup(
 	],
 	keywords='api-wrapper randomstuff api wrapper',
 	project_urls={
-    'Documentation': 'https://packaging.python.org/tutorials/distributing-packages/',
+    'Documentation': 'https://nerdguyahmad.gitbook.io/randomstuff/',
     'Source': 'https://github.com/nerdguyahmad/randomstuff.py',
     'Tracker': 'https://github.com/nerdguyahmad/randomstuff.py/issues',
 	},
 	install_requires=['aiohttp', 'requests'],
 	python_requires='>=3.6',
-	packages=find_packages(where='randomstuff'),
+	packages=find_packages(include=['randomstuff', 'randomstuff.*']),
 
 
 
