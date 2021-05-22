@@ -7,4 +7,3 @@ IMAGE_TYPES = ['aww', 'duck',
 JOKE_TYPES = ['any', 'dev', 'spooky', 'pun']
 PLANS = [None, 'pro', 'ultra', 'biz', 'mega']
 VERSIONS = ['2', '3']
-JOKE_TYPES = ['any', 'dev', 'spooky', 'pun']
