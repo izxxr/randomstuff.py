@@ -12,7 +12,7 @@ setup(
 	long_description_content_type='text/markdown',
 	url='https://github.com/nerdguyahmad/randomstuff.py',
 	author='nerdguyahmad',
-	author_email='nerdguyahmad.contact@gmain.com',
+	author_email='nerdguyahmad.contact@gmail.com',
 	license='MIT',
 	classifiers=[
 	'Development Status :: 3 - Alpha',
