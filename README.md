@@ -1,6 +1,11 @@
 # randomstuff.py
 An easy to use python API wrapper for the Random Stuff API.
 
+- Easy-to-use & Organized
+- Supports both async and sync
+- Supports both v2 and v3 versions of API
+- Supports all type of API plans
+
 ## Quickstart
 Firstly make sure to [get the API key from here](https://api.pgamerx.com/register)
 
