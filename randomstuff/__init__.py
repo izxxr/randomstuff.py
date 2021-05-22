@@ -11,6 +11,8 @@ An easy to use python API wrapper for Random Stuff API.
 from .flags import *
 from .joke import *
 from .client import *
+from .errors import *
+from .constants import *
 
 __author__ = 'nerdguyahmad'
 __version__ = '1.0.0a'
