@@ -12,6 +12,13 @@ class Client:
 	----------
 	key (str): Your API authentication key.
 
+	Methods 
+	-------
+
+	get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
+	get_image(type: str = 'any'): Get random image.
+	get_joke(type: str = 'any'): Get random joke.
+	
 	"""
 	def __init__(self, key: str):
 		self.key = key
@@ -89,6 +96,13 @@ class Client:
 		self.session.close()
 
 class AsyncClient:
+	"""Represent a client
+	
+	Parameters
+	----------
+	key (str): Your API authentication key.
+
+	"""
 	def __init__(self, key: str):
 		self.key = key
 		self.session = aiohttp.ClientSession(headers={'x-api-key': self.key})
