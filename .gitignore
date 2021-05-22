@@ -133,3 +133,4 @@ auth
 main.py
 tests
 .gitignore
+.pypirc
