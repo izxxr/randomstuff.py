@@ -45,7 +45,7 @@ This library also supports async usage.
 import randomstuff
 import asyncio
 
-client = randomstuff.AsyncClient()
+client = randomstuff.AsyncClient(key="api-key-here")
 
 def coro():
   response = await client.get_ai_response("Hello world")
