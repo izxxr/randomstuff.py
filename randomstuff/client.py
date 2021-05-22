@@ -144,6 +144,9 @@ class AsyncClient:
 
 	async def get_image(self, type: str = 'any'):
 		"""
+		This function is a coroutine
+		----------------------------
+
 		Gets an image
 
 		Parameters:
@@ -167,7 +170,11 @@ class AsyncClient:
 		return (await response.json())[0]
 
 	async def get_joke(self, type: str = 'any'):
-		"""Gets a joke
+		"""
+		This function is a coroutine
+		----------------------------
+
+		Gets a joke
 
 		Parameters:
 			type (str) (optional): The type of joke. By default, it is 'any'.
@@ -186,5 +193,11 @@ class AsyncClient:
 		return Joke(await response.json())
 
 	async def close(self):
-		"""Closes a session"""
+		"""
+		This function is a coroutine
+		----------------------------
+
+		Closes a session
+
+		"""
 		await self.session.close()
