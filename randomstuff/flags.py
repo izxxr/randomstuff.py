@@ -18,3 +18,4 @@ class Flags:
 		self.racist = flags['racist']
 		self.sexist = flags['sexist']
 		self.explicit = flags['explicit']
+		self.dict = flags

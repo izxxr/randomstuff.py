@@ -30,3 +30,4 @@ class Joke:
 		self.id = data['id']
 		self.safe = data['safe']
 		self.lang = data['lang']
+		self.dict = data
