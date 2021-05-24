@@ -67,15 +67,16 @@ class Client:
 			params = {'message': message, 'lang': lang, 'type': type}
 			response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
 			if response.status_code == 401:
-				raise AuthError('Invalid API key')
+				raise AuthError(response.text)
 				return
 			return response.json()[0]['message']
 		
 		elif self.version == 'v3' and plan != None:
 			params = {'message': message, 'lang': lang, 'type': type}
 			response = self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
+			return response.text
 			if response.status_code == 401:
-				raise AuthError('Invalid API key or API key does not support this plan')
+				raise AuthError(response.text)
 				return
 			return response.json()[0]['message']
 		
@@ -122,6 +123,9 @@ class Client:
 
 		elif self.version == 'v3':
 			response = self.session.get(f'{BASE_URL}/v3/joke/{type}')
+
+		if response.status_code == 401:
+			raise AuthError(response.text)
 
 		return Joke(response.json())
 
@@ -190,17 +194,21 @@ class AsyncClient:
 		elif self.version == 'v3' and plan == None:
 			params = {'message': message, 'lang': lang, 'type': type}
 			response = await self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
+			
 			if response.status == 401:
-				raise AuthError('Invalid API key')
+				raise AuthError(response.text)
 				return
+				
 			return (await response.json())[0]['message']
 
 		elif self.version == 'v3' and plan != None:
 			params = {'message': message, 'lang': lang, 'type': type}
 			response = await self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
+			
 			if response.status == 401:
-				raise AuthError('Invalid API key or API key does not support this plan.')
+				raise AuthError(response.text)
 				return
+
 			return (await response.json())[0]['message']
 
 
@@ -229,6 +237,9 @@ class AsyncClient:
 
 		elif self.version == 'v3':
 			response = await self.session.get(f'{BASE_URL}/v3/image/{type}')
+
+		if response.status == 401:
+			raise AuthError(response.text)
 
 		return (await response.json())[0]
 
