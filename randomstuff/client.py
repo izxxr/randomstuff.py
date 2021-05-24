@@ -264,6 +264,9 @@ class AsyncClient:
 
 		elif self.version == 'v3':
 			response = await self.session.get(f'{BASE_URL}/v3/joke/{type}')
+		
+		if response.text == 401:
+			raise AuthError(response.text)
 
 		return Joke(await response.json())
 
