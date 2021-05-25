@@ -51,6 +51,8 @@ class Client:
 			type (str) (optional): The type of response. This is by default 'stable' and is recommended
 								   to be stable.
 			plan (str) (optional): If you have a plan for RandomAPI pass the plan's name in this argument. `randomstuff.constants.PLAN` for list of plans.
+			dev_name (str) (optional): The developer name. Used in responses.
+			bot_name (str) (optional): The bot's name. Used in responses.
 
 		Returns:
 			str: The response.
