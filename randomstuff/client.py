@@ -21,7 +21,7 @@ class Client:
 	get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
 	get_image(type: str = 'any'): Get random image.
 	get_joke(type: str = 'any'): Get random joke.
-	get_joke(): Closes the session.
+	close(): Closes the session.
 
 	"""
 	def __init__(self, key: str, version: str = '3', suppress_warnings: bool = False):
