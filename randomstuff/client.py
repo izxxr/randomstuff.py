@@ -56,6 +56,7 @@ class Client:
 			plan (str) (optional): If you have a plan for RandomAPI pass the plan's name in this argument. `randomstuff.constants.PLAN` for list of plans.
 			dev_name (str) (optional): The developer name. Used in responses.
 			bot_name (str) (optional): The bot's name. Used in responses.
+			unique_id (str) (optional): This is used to save your identity in bot. Use a secure and combination of letters and numbers. Use `randomstuff.utils.generate_unique_id()` to generate one easily.
 
 		Returns:
 			str: The response.
@@ -210,6 +211,7 @@ class AsyncClient:
 			plan (str) (optional): If you have a plan for RandomAPI pass the plan's name in this argument. `randomstuff.constants.PLAN` for list of plans.
 			dev_name (str) (optional): The developer name. Used in responses.
 			bot_name (str) (optional): The bot's name. Used in responses.
+			unique_id (str) (optional): This is used to save your identity in bot. Use a secure and combination of letters and numbers. Use `randomstuff.utils.generate_unique_id()` to generate one easily.
 
 		Returns:
 			str: The response.
