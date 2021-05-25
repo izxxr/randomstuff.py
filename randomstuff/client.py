@@ -31,7 +31,13 @@ class Client:
 		self.session = requests.Session()
 		self.session.headers.update({'x-api-key': self.key})
 
-	def get_ai_response(self, message: str, lang: str = 'en', type: str = 'stable', plan: str = None):
+	def get_ai_response(self,
+		message: str,
+		lang: str = 'en',
+		type: str = 'stable',
+		plan: str = None,
+		dev_name: str = 'PGamerX',
+		bot_name: str = 'RSA'):
 		"""Gets AI response
 
 		Parameters:
@@ -63,8 +69,13 @@ class Client:
 			response = self.session.get(f'{BASE_URL}/ai/response?message={message}&language={lang}&api_key={self.key}')
 			return response.json()[0]
 
-		elif self.version == 'v3' and plan == None:
-			params = {'message': message, 'lang': lang, 'type': type}
+		params = {'message': message, 
+		'lang': lang, 
+		'type': type, 
+		'bot_name': bot_name, 
+		'dev_name': dev_name}
+
+		if self.version == 'v3' and plan == None:
 			response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
 			if response.status_code == 401:
 				raise AuthError(response.text)
@@ -159,7 +170,13 @@ class AsyncClient:
 		self.key = key
 		self.session = aiohttp.ClientSession(headers={'x-api-key': self.key})
 	
-	async def get_ai_response(self, message: str, lang: str = 'en', type: str = 'stable', plan: str = None):
+	async def get_ai_response(self,
+		message: str,
+		lang: str = 'en',
+		type: str = 'stable',
+		plan: str = None,
+		bot_name: str = 'RSA',
+		dev_name: str = 'PGamerX'):
 		"""
 		This function is a coroutine
 		----------------------------
@@ -191,8 +208,12 @@ class AsyncClient:
 			response = await self.session.get(f'{BASE_URL}/ai/response?message={message}&language={lang}&api_key={self.key}')
 			return (await response.json())[0]
 
-		elif self.version == 'v3' and plan == None:
-			params = {'message': message, 'lang': lang, 'type': type}
+		params = {'message': message, 
+		'lang': lang, 
+		'type': type,
+		'bot_name': bot_name,
+		'dev_name': dev_name}
+		elif self.version == 'v3' and plan == None:			
 			response = await self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
 			
 			if response.status == 401:
@@ -202,7 +223,6 @@ class AsyncClient:
 			return (await response.json())[0]['message']
 
 		elif self.version == 'v3' and plan != None:
-			params = {'message': message, 'lang': lang, 'type': type}
 			response = await self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
 			
 			if response.status == 401:
