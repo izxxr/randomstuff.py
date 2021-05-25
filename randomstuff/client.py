@@ -221,7 +221,6 @@ class AsyncClient:
 		if self.version == 'v2' and plan != None:
 			raise VersionError(f"v2 does not support {plan} plan.")
 			return
-
 		
 		if self.version == 'v2':
 			response = await self.session.get(f'{BASE_URL}/ai/response?message={message}&language={lang}&api_key={self.key}')
