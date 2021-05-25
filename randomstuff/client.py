@@ -1,5 +1,6 @@
 from .errors import *
 from .constants import *
+from .constants import _warn
 from .joke import *
 import aiohttp
 import requests
@@ -21,15 +22,19 @@ class Client:
 	get_joke(type: str = 'any'): Get random joke.
 
 	"""
-	def __init__(self, key: str, version: str = '3'):
+	def __init__(self, key: str, version: str = '3', suppress_warnings: bool = False):
 		if not version in VERSIONS:
 			raise VersionError("Invalid API version was provided. Use `2` or `3` only.")
 			return
 
 		self.version = "v"+version
 		self.key = key
+		self.suppress_warnings = suppress_warnings
 		self.session = requests.Session()
 		self.session.headers.update({'x-api-key': self.key})
+		
+		if self.version == 'v2':
+			_warn(self, 'You are using v2 of API which is outdated and will soon be deprecated. To avoid feature issues and unstability issues, Please set `version` to "3" to use latest and supported version. To stop these warnings, Set `suppress_warnings` to `True`.\n')
 
 	def get_ai_response(self,
 		message: str,
@@ -161,14 +166,19 @@ class AsyncClient:
 	async get_joke(type: str = 'any'): Get random joke.
 	
 	"""
-	def __init__(self, key: str, version: str = '3'):
+	def __init__(self, key: str, version: str = '3', suppress_warnings: bool = False):
 		if not version in VERSIONS:
 			raise VersionError("Invalid API version was provided. Use `2` or `3` only.")
 			return
 
 		self.version = "v"+version
 		self.key = key
+		self.suppress_warnings = suppress_warnings
 		self.session = aiohttp.ClientSession(headers={'x-api-key': self.key})
+
+		if self.version == 'v2':
+			_warn(self, 'You are using v2 of API which is outdated and will soon be deprecated. To avoid feature issues and unstability issues, Please set `version` to "3" to use latest and supported version. To stop these warnings, Set `suppress_warnings` to `True`.\n')
+
 	
 	async def get_ai_response(self,
 		message: str,
@@ -213,7 +223,8 @@ class AsyncClient:
 		'type': type,
 		'bot_name': bot_name,
 		'dev_name': dev_name}
-		elif self.version == 'v3' and plan == None:			
+
+		if self.version == 'v3' and plan == None:			
 			response = await self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
 			
 			if response.status == 401:

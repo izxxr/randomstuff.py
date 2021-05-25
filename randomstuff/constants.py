@@ -1,3 +1,9 @@
+def _warn(client, warning):
+	if client.suppress_warnings == True:
+		return
+	else:
+		print("[WARNING] "+"\n"+warning)
+
 BASE_URL = 'https://api.pgamerx.com'
 IMAGE_TYPES = ['aww', 'duck', 
 	'dog', 'cat', 
