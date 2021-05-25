@@ -163,7 +163,7 @@ class AsyncClient:
 	"""
 	def __init__(self, key: str, version: str = '3'):
 		if not version in VERSIONS:
-			raise TypeError("Invalid API version was provided. Use `2` or `3` only.")
+			raise VersionError("Invalid API version was provided. Use `2` or `3` only.")
 			return
 
 		self.version = "v"+version
