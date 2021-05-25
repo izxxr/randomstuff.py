@@ -2,9 +2,11 @@
 An easy to use python API wrapper for the Random Stuff API.
 
 - Easy-to-use & Organized
+- Wraps the entire API
 - Supports both async and sync
 - Supports both v2 and v3 versions of API
 - Supports all type of API plans
+- Actively maintained
 
 ## Installation
 Installation can be done easily using the python package manager `pip`
@@ -58,7 +60,7 @@ import asyncio
 
 client = randomstuff.AsyncClient(key="api-key-here")
 
-def coro():
+async def coro():
   response = await client.get_ai_response("Hello world")
   await client.close()  
   print(response)
