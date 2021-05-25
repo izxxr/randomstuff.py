@@ -13,7 +13,7 @@ class Client:
 	----------
 	key (str): Your API authentication key.
 	version (str) (optional): The version number of API. It is 3 by default set it to 2 if you want to use v2.
-	suppress_warnings (boot) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
+	suppress_warnings (bool) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
 
 	Methods 
 	-------
@@ -21,6 +21,7 @@ class Client:
 	get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
 	get_image(type: str = 'any'): Get random image.
 	get_joke(type: str = 'any'): Get random joke.
+	get_joke(): Closes the session.
 
 	"""
 	def __init__(self, key: str, version: str = '3', suppress_warnings: bool = False):
@@ -159,7 +160,7 @@ class AsyncClient:
 	----------
 	key (str): Your API authentication key.
 	version (str) (optional): The version number of API. It is 3 by default set it to 2 if you want to use v2.
-	suppress_warnings (boot) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
+	suppress_warnings (bool) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
 
 
 	Methods 
@@ -168,6 +169,7 @@ class AsyncClient:
 	async get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
 	async get_image(type: str = 'any'): Get random image.
 	async get_joke(type: str = 'any'): Get random joke.
+	async close(): Closes the session.
 	
 	"""
 	def __init__(self, key: str, version: str = '3', suppress_warnings: bool = False):
