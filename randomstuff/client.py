@@ -13,6 +13,7 @@ class Client:
 	----------
 	key (str): Your API authentication key.
 	version (str) (optional): The version number of API. It is 3 by default set it to 2 if you want to use v2.
+	suppress_warnings (boot) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
 
 	Methods 
 	-------
@@ -158,6 +159,7 @@ class AsyncClient:
 	----------
 	key (str): Your API authentication key.
 	version (str) (optional): The version number of API. It is 3 by default set it to 2 if you want to use v2.
+	suppress_warnings (boot) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
 
 
 	Methods 
