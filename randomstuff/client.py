@@ -44,7 +44,8 @@ class Client:
 		type: str = 'stable',
 		plan: str = None,
 		dev_name: str = 'PGamerX',
-		bot_name: str = 'RSA'):
+		bot_name: str = 'RSA',
+		unique_id: str = None):
 		"""Gets AI response
 
 		Parameters:
@@ -82,7 +83,8 @@ class Client:
 		'lang': lang, 
 		'type': type, 
 		'bot_name': bot_name, 
-		'dev_name': dev_name}
+		'dev_name': dev_name,
+		'unique_id': unique_id}
 
 		if self.version == 'v3' and plan == None:
 			response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
@@ -192,7 +194,8 @@ class AsyncClient:
 		type: str = 'stable',
 		plan: str = None,
 		bot_name: str = 'RSA',
-		dev_name: str = 'PGamerX'):
+		dev_name: str = 'PGamerX',
+		unique_id: str = None):
 		"""
 		This function is a coroutine
 		----------------------------
@@ -230,7 +233,8 @@ class AsyncClient:
 		'lang': lang, 
 		'type': type,
 		'bot_name': bot_name,
-		'dev_name': dev_name}
+		'dev_name': dev_name,
+		'unique_id': unique_id}
 
 		if self.version == 'v3' and plan == None:			
 			response = await self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
@@ -238,7 +242,6 @@ class AsyncClient:
 			if response.status == 401:
 				raise AuthError(response.text)
 				return
-				
 			return (await response.json())[0]['message']
 
 		elif self.version == 'v3' and plan != None:
