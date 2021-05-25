@@ -60,7 +60,7 @@ import asyncio
 
 client = randomstuff.AsyncClient(key="api-key-here")
 
-def coro():
+async def coro():
   response = await client.get_ai_response("Hello world")
   await client.close()  
   print(response)
