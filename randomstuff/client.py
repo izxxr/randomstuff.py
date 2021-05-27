@@ -284,6 +284,10 @@ class AsyncClient:
 			raise PlanError(f"Invalid Plan. Choose from {PLANS}")
 			return
 
+		if self.version == 'v4':
+			raise VersionError("v4 is a beta version with entirely different endpoint and parameters. Please use `Client.get_ai_response_beta()` for v4 until beta is over.")
+			return
+			
 		if self.version == 'v2' and plan != None:
 			raise VersionError(f"v2 does not support {plan} plan.")
 			return
@@ -291,6 +295,7 @@ class AsyncClient:
 		if self.version == 'v2':
 			response = await self.session.get(f'{BASE_URL}/ai/response?message={message}&language={lang}&api_key={self.key}')
 			return (await response.json())[0]
+
 
 		params = {'message': message, 
 		'lang': lang, 
