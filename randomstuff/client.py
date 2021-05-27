@@ -36,7 +36,9 @@ class Client:
 		self.session.headers.update({'x-api-key': self.key})
 		
 		if self.version == 'v2':
-			_warn(self, 'You are using v2 of API which is outdated and will soon be deprecated. To avoid feature issues and unstability issues, Please set `version` to "3" to use latest and supported version. To stop these warnings, Set `suppress_warnings` to `True`.\n')
+			_warn(self, 'You are using v2 of API which is outdated and will soon be deprecated. To avoid feature issues and unstability issues, Please set `version` to "3" to use latest and supported version.\n')
+		elif self.version == 'v4':
+			_warn(self, "You are using v4 as your API version which is currently in beta state. You may face issues and errors.")
 
 	def get_ai_response(self,
 		message: str,
@@ -249,7 +251,10 @@ class AsyncClient:
 		if self.version == 'v2':
 			_warn(self, 'You are using v2 of API which is outdated and will soon be deprecated. To avoid feature issues and unstability issues, Please set `version` to "3" to use latest and supported version. To stop these warnings, Set `suppress_warnings` to `True`.\n')
 
-	
+		elif self.version == 'v4':
+			_warn(self, "You are using v4 as your API version which is currently in beta state. You may face issues and errors.")
+
+
 	async def get_ai_response(self,
 		message: str,
 		lang: str = 'en',
@@ -287,7 +292,7 @@ class AsyncClient:
 		if self.version == 'v4':
 			raise VersionError("v4 is a beta version with entirely different endpoint and parameters. Please use `Client.get_ai_response_beta()` for v4 until beta is over.")
 			return
-			
+
 		if self.version == 'v2' and plan != None:
 			raise VersionError(f"v2 does not support {plan} plan.")
 			return
