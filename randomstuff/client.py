@@ -181,10 +181,10 @@ class Client:
 		if type == 'any':
 			type = random.choice(IMAGE_TYPES)
 
-		if self.version == 'v2':
+		if self.version == 'v2' or self.version == 'v4':
 			response = self.session.get(f'{BASE_URL}/image/{type}?api_key={self.key}')
 
-		elif self.version == 'v3':
+		elif self.version == 'v3' or self.version == 'v4':
 			response = self.session.get(f'{BASE_URL}/v3/image/{type}')
 
 		return response.json()[0]
@@ -202,10 +202,10 @@ class Client:
 			randomstuff.AuthError: The API key was invalid.
 		"""
 
-		if self.version == 'v2':
+		if self.version == 'v2' or self.version == 'v4':
 			response = self.session.get(f'{BASE_URL}/joke/{type}?api_key={self.key}')
 
-		elif self.version == 'v3':
+		elif self.version == 'v3' or self.version == 'v4':
 			response = self.session.get(f'{BASE_URL}/v3/joke/{type}')
 
 		if response.status_code == 401:
@@ -405,7 +405,7 @@ class AsyncClient:
 		if self.version == 'v2':
 			response = await self.session.get(f'{BASE_URL}/image/{type}?api_key={self.key}')
 
-		elif self.version == 'v3':
+		elif self.version == 'v3' or self.version == 'v4':
 			response = await self.session.get(f'{BASE_URL}/v3/image/{type}')
 
 		if response.status == 401:
@@ -432,7 +432,7 @@ class AsyncClient:
 		if self.version == 'v2':
 			response = await self.session.get(f'{BASE_URL}/joke/{type}?api_key={self.key}')
 
-		elif self.version == 'v3':
+		elif self.version == 'v3' or self.version == 'v4':
 			response = await self.session.get(f'{BASE_URL}/v3/joke/{type}')
 		
 		if response.text == 401:
