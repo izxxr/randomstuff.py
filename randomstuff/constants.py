@@ -3,6 +3,7 @@ def _warn(client, warning):
 		return
 	else:
 		print("[WARNING] "+"\n"+warning)
+		print("\n[INFO] You can disable warnings by setting suppress_warnings to `True` in Client or AsyncClient.")
 
 BASE_URL = 'https://api.pgamerx.com'
 IMAGE_TYPES = ['aww', 'duck', 
