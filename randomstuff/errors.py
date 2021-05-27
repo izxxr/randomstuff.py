@@ -9,3 +9,6 @@ class PlanError(Exception):
 
 class ArgumentError(Exception):
 	...
+
+class ServerError(Exception):
+	...
