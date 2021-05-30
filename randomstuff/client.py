@@ -44,7 +44,7 @@ class Client:
 		message: str,
 		lang: str = 'en',
 		type: str = 'stable',
-		plan: str = None,
+		plan: str = '',
 		dev_name: str = 'PGamerX',
 		bot_name: str = 'RSA',
 		unique_id: str = ''
