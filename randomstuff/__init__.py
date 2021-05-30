@@ -15,6 +15,6 @@ from .errors import *
 from .constants import *
 
 __author__ = 'nerdguyahmad'
-__version__ = '1.3.1'
+__version__ = '1.3.3'
 __license__ = 'MIT'
 __copyright__ = '2021-present nerdguyahmad.'
