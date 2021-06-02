@@ -8,7 +8,7 @@ If you have a program running the API version 2, You don't have to worry about c
 """
 import randomstuff
 
-client = randomstuff.Client(key="api-key-here", version="3") # Pass in API version in version argument. Choose one from 2 or 3.
+client = randomstuff.Client(key="api-key-here", version="3") # Pass in API version in version argument. Choose one from 2 or 3 or 4 (v4 is beta).
 
 """Put your rest of code here. You have to change nothing when changing API versions. Wrapper deals with that itself."""
 ...
