@@ -2,10 +2,12 @@
 An easy to use python API wrapper for the Random Stuff API.
 
 - Easy-to-use & Organized
+- Designed to be as optimized as possible
 - Wraps the entire API
 - Supports both async and sync
-- Supports both v2 and v3 versions of API
+- Supports both v2 and v3 versions of API (As well as v4 beta)
 - Supports all type of API plans
+- All classes are well [documented](https://github.com/nerdguyahmad/randomstuff.py/wiki)
 - Actively maintained
 
 ## Installation
