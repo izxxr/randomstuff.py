@@ -134,11 +134,11 @@ class Client:
 		if type == 'any':
 			type = random.choice(IMAGE_TYPES)
 
-		if self.version == 'v2' or self.version == 'v4':
-			response = self.session.get(f'{BASE_URL}/image/{type}?api_key={self.key}')
-
-		elif self.version == 'v3' or self.version == 'v4':
+		if self.version == 'v3':
 			response = self.session.get(f'{BASE_URL}/v3/image/{type}')
+
+		elif self.version == 'v4':
+			response = self.session.get(f'{BASE_URL}/v4/image', params={'type': type})
 
 		return response.json()[0]
 
@@ -155,11 +155,10 @@ class Client:
 			randomstuff.AuthError: The API key was invalid.
 		"""
 
-		if self.version == 'v2' or self.version == 'v4':
-			response = self.session.get(f'{BASE_URL}/joke/{type}?api_key={self.key}')
-
-		elif self.version == 'v3' or self.version == 'v4':
-			response = self.session.get(f'{BASE_URL}/v3/joke/{type}')
+		if self.version == 'v4':
+			response = self.session.get(f'{BASE_URL}/{self.version}/joke', params={'type': type})
+		elif self.version == 'v3':
+			response = self.session.get(f'{BASE_URL}/{self.version}/joke/{type}')
 
 		if response.status_code == 401:
 			raise AuthError(response.text)
@@ -183,7 +182,7 @@ class AsyncClient:
 	Methods 
 	-------
 
-	async get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
+	async get_ai_response(message: str, plan: str = '', **kwargs): Get random AI response.
 	async get_image(type: str = 'any'): Get random image.
 	async get_joke(type: str = 'any'): Get random joke.
 	async close(): Closes the session.
@@ -286,102 +285,7 @@ class AsyncClient:
 
 		return (await response.json())[0]['message']
 
-	async def get_ai_response_beta(self,
-							message:str,
-							uid:str='',
-							language:str='en',
-							bot:str='RSA',
-							master:str='PGamerX',
-							server:str='primary'):
-		"""
-		This function is a coroutine
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		Gets AI response from v4 endpoint
-
-		[WARNING] v4 is a beta version with entirely different endpoint and parameters. Consider using v3 for
-		general use. Read the wiki for info about parameters of this function.
-
-		Parameters:
-			message (str): The message to which response is required
-			uid (str) (optional): This is used to save your identity in bot. Use a secure and combination of letters and numbers. Use `randomstuff.utils.generate_unique_id()` to generate one easily.
-			language (str) (optional): The language in which response is required. By default this is english.
-			bot (str) (optional): The bot's name. Used in responses.
-			master (str) (optional): The developer name. Used in responses.
-			server (str) (optional): The server from which the response should be obtained. Please see the table below
-		
-			|-----------|----------------------------------------------------------------|
-			|  Server   |                      Description                               |
-			|:---------:|:--------------------------------------------------------------:|
-			|  primary  |                     The main server.                           |
-			|  backup   | Since this is a beta, this is backup server if primary is down.|
-			|  unstable | The unstable server, Responses are very unstable in this one.  |
-			|-----------|----------------------------------------------------------------|
-
-		"""
-		if not self.version == 'v4':
-			raise VersionError("Only v4 supports this method.")
-			return
-
-		if not server in SERVERS:
-			raise ServerError("Invalid type of server provided. Only {SERVERS} are supported")
-			return
-
-		if server in ['backup', 'unstable'] and language != 'en':
-			raise ServerError(f"{server} does not support languages other then english.")
-			return
-
-
-		params = {'message': message,
-				'uid': uid,
-				'language': language,
-				'bot': bot,
-				'master': master,
-				'server': server
-			}
-		response = await self.session.get(f'{BASE_URL}/beta/ai', params=params)
-
-		if response.status == 401:
-			raise AuthError(response.text)
-			return
-
-		if response.status == 403:
-			raise AuthError(response.text)
-			return
-
-		return (await response.json())[0]['message']
-
-
-
-	async def get_image(self, type: str = 'any'):
-		"""
-		This function is a coroutine
-		----------------------------
-
-		Gets an image
-
-		Parameters:
-			type (str) (optional): The type of image. By default, it is 'any'.
-
-		Returns:
-			str: Link of image
-
-		Raises:
-			randomstuff.AuthError: The API key was invalid.
-		"""
-		if type == 'any':
-			type = random.choice(IMAGE_TYPES)
-
-		if self.version == 'v2':
-			response = await self.session.get(f'{BASE_URL}/image/{type}?api_key={self.key}')
-
-		elif self.version == 'v3' or self.version == 'v4':
-			response = await self.session.get(f'{BASE_URL}/v3/image/{type}')
-
-		if response.status == 401:
-			raise AuthError(response.text)
-
-		return (await response.json())[0]
+	
 
 	async def get_joke(self, type: str = 'any'):
 		"""
@@ -399,16 +303,47 @@ class AsyncClient:
 		Raises:
 			randomstuff.AuthError: The API key was invalid.
 		"""
-		if self.version == 'v2':
-			response = await self.session.get(f'{BASE_URL}/joke/{type}?api_key={self.key}')
+		if self.version == 'v4':
+			response = await self.session.get(f'{BASE_URL}/{self.version}/joke', params={'type': type})
+		elif self.version == 'v3':
+			response = await self.session.get(f'{BASE_URL}/{self.version}/joke/{type}')
 
-		elif self.version == 'v3' or self.version == 'v4':
-			response = await self.session.get(f'{BASE_URL}/v3/joke/{type}')
-		
-		if response.text == 401:
+		if response.status == 401:
 			raise AuthError(response.text)
 
 		return Joke(await response.json())
+
+	async def get_image(self):
+		"""
+		This function is a coroutine
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		Gets random image.
+
+		Parameters:
+			type (optional) (str) : The type of image to get. Defaults to `any`
+
+		Returns:
+			str : Image Link as an str
+
+		Raises:
+			randomstuff.AuthError: The API key was invalid.
+		"""
+		if not type in IMAGE_TYPES:
+			raise TypeError(f"Image type not supported. Choose from {IMAGE_TYPES}")
+			return
+
+		if type == 'any':
+			type = random.choice(IMAGE_TYPES)
+
+		if self.version == 'v3':
+			response = await self.session.get(f'{BASE_URL}/v3/image/{type}')
+
+		elif self.version == 'v4':
+			response =  await self.session.get(f'{BASE_URL}/v4/image', params={'type': type})
+			
+
+		return (await response.json())[0]
 
 	async def close(self):
 		"""
