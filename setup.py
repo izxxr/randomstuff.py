@@ -28,7 +28,7 @@ setup(
 	],
 	keywords='api-wrapper randomstuff api wrapper',
 	project_urls={
-    'Documentation': 'https://nerdguyahmad.gitbook.io/randomstuff/',
+    'Documentation': 'https://github.com/nerdguyahmad/randomstuff.py/wiki',
     'Source': 'https://github.com/nerdguyahmad/randomstuff.py',
     'Tracker': 'https://github.com/nerdguyahmad/randomstuff.py/issues',
 	},
