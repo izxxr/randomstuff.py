@@ -12,13 +12,13 @@ class Client:
 	Parameters
 	----------
 	key (str): Your API authentication key.
-	version (str) (optional): The version number of API. It is 3 by default set it to 2 if you want to use v2.
+	version (str) (optional): The version number of API. It is 4 by default. Set it to 3 if you want to use v3.
 	suppress_warnings (bool) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
 
 	Methods 
 	-------
 
-	get_ai_response(message: str, lang: str = 'en', type: str = 'stable'): Get random AI response.
+	get_ai_response(message: str, plan: str = '', **kwargs): Get random AI response.
 	get_image(type: str = 'any'): Get random image.
 	get_joke(type: str = 'any'): Get random joke.
 	close(): Closes the session.
@@ -48,23 +48,40 @@ class Client:
 		**kwargs):
 		"""Gets AI response
 
-		Parameters:
-			message (str): The message to which response is required
-			lang (str) (optional): The language in which response is required. By default this is english.
-			type (str) (optional): The type of response. This is by default 'stable' and is recommended
-								   to be stable.
-			plan (str) (optional): If you have a plan for RandomAPI pass the plan's name in this argument. `randomstuff.constants.PLAN` for list of plans.
-			dev_name (str) (optional): The developer name. Used in responses.
-			bot_name (str) (optional): The bot's name. Used in responses.
-			unique_id (str) (optional): This is used to save your identity in bot. Use a secure and combination of letters and numbers. Use `randomstuff.utils.generate_unique_id()` to generate one easily.
+		This method has version based parameters
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+		Common parameters:
+			message (str) : The message to which response is required.
+			plan (optional) (str) : The plan to use. This is optional and can only be used if API key has a paid plan registered.
+
+			Above two parameters are not version specific they are supported in both versions.
+
+		Version 3 specific:
+			lang (optional) (str) : Language in which response is required. Defaults to `en`.
+			type (optional) (str) : Language in which response is required. Defaults to `en`.
+			bot_name (optional) (str) : The bot's name. Used in responses. Defaults to `RSA`
+			dev_name (optional) (str) : The developer's name. Used in responses. Defaults to `PGamerX`
+			unique_id (optional) (str) : The session specific user ID. Use this to make sessions for
+									     certain user.
+		
+		Version 4 specific:
+			language (optional) (str) : Language in which response is required. Defaults to `en`.
+			server (optional) (str) : The server from which the response will be sent. Defaults to primary.
+									  Set this to `backup` if the primary one isn't working. `unstable` is also
+									  an option but don't use it as it is highly unstable.
+			master (optional) (str) : The developer's name. Used in responses. Defaults to `PGamerX`
+			bot (optional) (str) : The bot's name. Used in responses. Defaults to `RSA`
+			uid (optional) (str) : The session specific user ID. Use this to make sessions for
+							       certain user.
+		
 		Returns:
-			str: The response.
+			str: The response as a string
 
 		Raises:
-			randomstuff.AuthError: The API key was invalid.
-			randomstuff.PlanError: Invalid Plan
-			randomstuff.VersionError: Unsupported or invalid version.
+			randomstuff.AuthError: The API key is invalid
+			randomstuff.PlanError: Plan is either forbidden, invalid etc.
+			randomstuff.ServerError: Specific to v4, Raised upon invalid server type.
 		"""
 		if not plan in PLANS:
 			raise PlanError(F"Invalid Plan. Choose from {PLANS}")
@@ -214,25 +231,7 @@ class AsyncClient:
 		This function is a coroutine
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Gets AI response
-
-		Parameters:
-			message (str): The message to which response is required
-			lang (str) (optional): The language in which response is required. By default this is english.
-			type (str) (optional): The type of response. This is by default 'stable' and is recommended
-								   to be stable.
-			plan (str) (optional): If you have a plan for RandomAPI pass the plan's name in this argument. `randomstuff.constants.PLAN` for list of plans.
-			dev_name (str) (optional): The developer name. Used in responses.
-			bot_name (str) (optional): The bot's name. Used in responses.
-			unique_id (str) (optional): This is used to save your identity in bot. Use a secure and combination of letters and numbers. Use `randomstuff.utils.generate_unique_id()` to generate one easily.
-
-		Returns:
-			str: The response.
-
-		Raises:
-			randomstuff.AuthError: The API key was invalid.
-			randomstuff.PlanError: Invalid Plan
-			randomstuff.VersionError: Unsupported or invalid version.
+		Equivalent to `Client.get_ai_response`
 		"""
 		if not plan in PLANS:
 			raise PlanError(F"Invalid Plan. Choose from {PLANS}")
@@ -290,18 +289,9 @@ class AsyncClient:
 	async def get_joke(self, type: str = 'any'):
 		"""
 		This function is a coroutine
-		----------------------------
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Gets a joke
-
-		Parameters:
-			type (str) (optional): The type of joke. By default, it is 'any'.
-
-		Returns:
-			randomstuff.Joke: The `randomstuff.Joke` object for the joke.
-
-		Raises:
-			randomstuff.AuthError: The API key was invalid.
+		Equivalent to `Client.get_joke`
 		"""
 		if self.version == 'v4':
 			response = await self.session.get(f'{BASE_URL}/{self.version}/joke', params={'type': type})
@@ -318,16 +308,7 @@ class AsyncClient:
 		This function is a coroutine
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Gets random image.
-
-		Parameters:
-			type (optional) (str) : The type of image to get. Defaults to `any`
-
-		Returns:
-			str : Image Link as an str
-
-		Raises:
-			randomstuff.AuthError: The API key was invalid.
+		Equivalent to `Client.get_image`
 		"""
 		if not type in IMAGE_TYPES:
 			raise TypeError(f"Image type not supported. Choose from {IMAGE_TYPES}")
