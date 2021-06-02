@@ -25,8 +25,12 @@ class Client:
 
 	"""
 	def __init__(self, key: str, version: str = '4', suppress_warnings: bool = False):
+		if version == '2':
+			raise DeprecationWarning("Version 2 has been deprecated. Please migrate to version 4 as soon as possible.")
+			return
+
 		if not version in VERSIONS:
-			raise VersionError("Invalid API version was provided. Use `2` or `3` only.")
+			raise VersionError("Invalid API version was provided. Use `3` or `4` only.")
 			return
 
 		self.version = "v"+version
@@ -79,9 +83,12 @@ class Client:
 				'bot_name': kwargs.get('bot_name', 'RSA'), 
 				'dev_name': kwargs.get('dev_name', 'PGamerX'),
 				'unique_id': kwargs.get('unique_id', ''),
-				'plan': plan
 				}
-			response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
+			if plan == '':
+				response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
+			else:
+				response = self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
+
 			if response.status_code == 401:
 				raise AuthError(response.text)
 				return
@@ -96,92 +103,21 @@ class Client:
 			'bot': kwargs.get('bot', 'RSA'), 
 			'uid': kwargs.get('uid', ''), 
 			'language': kwargs.get('language', 'en'), 
-			'plan': plan
 			}
-			response = self.session.get(f'{BASE_URL}/v4/ai/response', params=params)
+
+			if plan == '':
+				response = self.session.get(f'{BASE_URL}/v4/ai', params=params)
+			else:
+				response = self.session.get(f'{BASE_URL}/v4/{plan}/ai', params=params)
+
 			if response.status_code == 401:
 				raise AuthError(response.text)
 				return
 
 			return response.json()[0]['message']
 
-
-		if self.version == 'v3' and plan == None:
-			response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
-			if response.status_code == 401:
-				raise AuthError(response.text)
-				return
-			return response.json()[0]['message']
 		
-		elif self.version == 'v3' and plan != None:
-			response = self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
-			if response.status_code == 401:
-				raise AuthError(response.text)
-				return
-			return response.json()[0]['message']
-
-		
-	def get_ai_response_beta(self,
-							message:str,
-							uid:str='',
-							language:str='en',
-							bot:str='RSA',
-							master:str='PGamerX',
-							server:str='primary'):
-		"""Gets AI response from v4 endpoint
-
-		[WARNING] v4 is a beta version with entirely different endpoint and parameters. Consider using v3 for
-		general use. Read the wiki for info about parameters of this function.
-
-		Parameters:
-			message (str): The message to which response is required
-			uid (str) (optional): This is used to save your identity in bot. Use a secure and combination of letters and numbers. Use `randomstuff.utils.generate_unique_id()` to generate one easily.
-			language (str) (optional): The language in which response is required. By default this is english.
-			bot (str) (optional): The bot's name. Used in responses.
-			master (str) (optional): The developer name. Used in responses.
-			server (str) (optional): The server from which the response should be obtained. Please see the table below
-		
-			|-----------|----------------------------------------------------------------|
-			|  Server   |                      Description                               |
-			|:---------:|:--------------------------------------------------------------:|
-			|  primary  |                     The main server.                           |
-			|  backup   | Since this is a beta, this is backup server if primary is down.|
-			|  unstable | The unstable server, Responses are very unstable in this one.  |
-			|-----------|----------------------------------------------------------------|
-
-		"""
-		if not self.version == 'v4':
-			raise VersionError("Only v4 supports this method.")
-			return
-
-		if not server in SERVERS:
-			raise ServerError("Invalid type of server provided. Only {SERVERS} are supported")
-			return
-
-		if server in ['backup', 'unstable'] and language != 'en':
-			raise ServerError(f"{server} does not support languages other then english.")
-			return
-
-		params = {'message': message,
-				'uid': uid,
-				'language': language,
-				'bot': bot,
-				'master': master,
-				'server': server
-			}
-		response = self.session.get(f'{BASE_URL}/beta/ai', params=params)
-
-		if response.status_code == 401:
-			raise AuthError(response.text)
-			return
-
-		if response.status_code == 403:
-			raise AuthError(response.text)
-			return
-
-		return response.json()[0]['message']
-		
-
+	
 	def get_image(self, type: str = 'any'):
 		"""Gets an image
 
