@@ -70,20 +70,19 @@ class Client:
 			raise PlanError(F"Invalid Plan. Choose from {PLANS}")
 			return
 
-		if kwargs['server'] and not kwargs['server'] in SERVERS:
+		if not kwargs.get('server', 'primary') in SERVERS:
 			raise ServerError(f"Invalid server type choose from {SERVERS}.") 
 			return
 
 		if self.version == 'v3':
-			try:
-				params = {
+			params = {
 				'message': message, 
 				'lang': kwargs.get('lang', 'en'), 
 				'type': kwargs.get('type', 'stable'), 
 				'bot_name': kwargs.get('bot_name', 'RSA'), 
 				'dev_name': kwargs.get('dev_name', 'PGamerX'),
 				'unique_id': kwargs.get('unique_id', ''),
-				}
+			}
 			if plan == '':
 				response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
 			else:
@@ -97,12 +96,12 @@ class Client:
 
 		elif self.version == 'v4':
 			params = {
-			'message': message, 
-			'server': kwargs.get('server', 'primary'), 
-			'master': kwargs.get('master', 'PGamerX'), 
-			'bot': kwargs.get('bot', 'RSA'), 
-			'uid': kwargs.get('uid', ''), 
-			'language': kwargs.get('language', 'en'), 
+				'message': message, 
+				'server': kwargs.get('server', 'primary'), 
+				'master': kwargs.get('master', 'PGamerX'), 
+				'bot': kwargs.get('bot', 'RSA'), 
+				'uid': kwargs.get('uid', ''), 
+				'language': kwargs.get('language', 'en'), 
 			}
 
 			if plan == '':
@@ -114,9 +113,12 @@ class Client:
 				raise AuthError(response.text)
 				return
 
+			elif response.status_code == 403:
+				raise PlanError(response.text)
+				return
+
 			return response.json()[0]['message']
 
-		
 	
 	def get_image(self, type: str = 'any'):
 		"""Gets an image
