@@ -92,7 +92,6 @@ class Client:
 				raise AuthError(response.text)
 				return
 
-			return response.json()[0]['message']
 
 		elif self.version == 'v4':
 			params = {
@@ -117,7 +116,7 @@ class Client:
 				raise PlanError(response.text)
 				return
 
-			return response.json()[0]['message']
+		return response.json()[0]['message']
 
 	
 	def get_image(self, type: str = 'any'):
@@ -191,21 +190,22 @@ class AsyncClient:
 	
 	"""
 	def __init__(self, key: str, version: str = '3', suppress_warnings: bool = False):
+		if version == '2':
+			raise DeprecationWarning("Version 2 has been deprecated. Please migrate to version 4 as soon as possible.")
+			return
+
 		if not version in VERSIONS:
-			raise VersionError("Invalid API version was provided. Use `2` or `3` only.")
+			raise VersionError("Invalid API version was provided. Use `3` or `4` only.")
 			return
 
 		self.version = "v"+version
 		self.key = key
 		self.suppress_warnings = suppress_warnings
 		self.session = aiohttp.ClientSession(headers={'x-api-key': self.key})
-
-		if self.version == 'v2':
-			_warn(self, 'You are using v2 of API which is outdated and will soon be deprecated. To avoid feature issues and unstability issues, Please set `version` to "3" to use latest and supported version. To stop these warnings, Set `suppress_warnings` to `True`.\n')
-
-		elif self.version == 'v4':
-			_warn(self, "You are using v4 as your API version which is currently in beta state. You may face issues and errors.")
-
+		
+		if self.version == 'v3':
+			_warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
+		
 
 	async def get_ai_response(self, 
 		message:str, 
@@ -261,8 +261,6 @@ class AsyncClient:
 				raise AuthError(response.text)
 				return
 
-			return response.json()[0]['message']
-
 		elif self.version == 'v4':
 			params = {
 				'message': message, 
@@ -286,7 +284,7 @@ class AsyncClient:
 				raise PlanError(response.text)
 				return
 
-			return (await response.json())[0]['message']
+		return (await response.json())[0]['message']
 
 	async def get_ai_response_beta(self,
 							message:str,
