@@ -207,20 +207,16 @@ class AsyncClient:
 			_warn(self, "You are using v4 as your API version which is currently in beta state. You may face issues and errors.")
 
 
-	async def get_ai_response(self,
-		message: str,
-		lang: str = 'en',
-		type: str = 'stable',
-		plan: str = '',
-		bot_name: str = 'RSA',
-		dev_name: str = 'PGamerX',
-		unique_id: str = ''):
+	async def get_ai_response(self, 
+		message:str, 
+		plan:str='', 
+		**kwargs):
 		"""
 		This function is a coroutine
-		----------------------------
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Gets AI response.
-	
+		Gets AI response
+
 		Parameters:
 			message (str): The message to which response is required
 			lang (str) (optional): The language in which response is required. By default this is english.
@@ -236,44 +232,58 @@ class AsyncClient:
 
 		Raises:
 			randomstuff.AuthError: The API key was invalid.
+			randomstuff.PlanError: Invalid Plan
+			randomstuff.VersionError: Unsupported or invalid version.
 		"""
 		if not plan in PLANS:
-			raise PlanError(f"Invalid Plan. Choose from {PLANS}")
+			raise PlanError(F"Invalid Plan. Choose from {PLANS}")
 			return
 
-		if self.version == 'v4':
-			raise VersionError("v4 is a beta version with entirely different endpoint and parameters. Please use `Client.get_ai_response_beta()` for v4 until beta is over.")
+		if not kwargs.get('server', 'primary') in SERVERS:
+			raise ServerError(f"Invalid server type choose from {SERVERS}.") 
 			return
 
-		if self.version == 'v2' and plan != None:
-			raise VersionError(f"v2 does not support {plan} plan.")
-			return
-		
-		if self.version == 'v2':
-			response = await self.session.get(f'{BASE_URL}/ai/response?message={message}&language={lang}&api_key={self.key}')
-			return (await response.json())[0]
+		if self.version == 'v3':
+			params = {
+				'message': message, 
+				'lang': kwargs.get('lang', 'en'), 
+				'type': kwargs.get('type', 'stable'), 
+				'bot_name': kwargs.get('bot_name', 'RSA'), 
+				'dev_name': kwargs.get('dev_name', 'PGamerX'),
+				'unique_id': kwargs.get('unique_id', ''),
+			}
+			if plan == '':
+				response = await self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
+			else:
+				response = await self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
 
-
-		params = {'message': message, 
-		'lang': lang, 
-		'type': type,
-		'bot_name': bot_name,
-		'dev_name': dev_name,
-		'unique_id': unique_id}
-
-		if self.version == 'v3' and plan == None:			
-			response = await self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
-			
 			if response.status == 401:
 				raise AuthError(response.text)
 				return
-			return (await response.json())[0]['message']
 
-		elif self.version == 'v3' and plan != None:
-			response = await self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
-			
+			return response.json()[0]['message']
+
+		elif self.version == 'v4':
+			params = {
+				'message': message, 
+				'server': kwargs.get('server', 'primary'), 
+				'master': kwargs.get('master', 'PGamerX'), 
+				'bot': kwargs.get('bot', 'RSA'), 
+				'uid': kwargs.get('uid', ''), 
+				'language': kwargs.get('language', 'en'), 
+			}
+
+			if plan == '':
+				response = await self.session.get(f'{BASE_URL}/v4/ai', params=params)
+			else:
+				response = await self.session.get(f'{BASE_URL}/v4/{plan}/ai', params=params)
+
 			if response.status == 401:
 				raise AuthError(response.text)
+				return
+
+			elif response.status == 403:
+				raise PlanError(response.text)
 				return
 
 			return (await response.json())[0]['message']
