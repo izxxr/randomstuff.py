@@ -6,7 +6,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
 	name='randomstuff.py',
-	version='1.3.3',
+	version='1.4.0',
 	description='An easy to use python API wrapper for Random Stuff API.',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
