@@ -13,9 +13,13 @@ from .joke import *
 from .client import *
 from .errors import *
 from .constants import *
+# To use randomstuff.utils module import it manually.
 
+__title__ = 'randomstuff.py'
+__summary__ = 'An easy to use and feature rich wrapper for Random Stuff API'
+__uri__ = 'https://github.com/nerdguyahmad/randomstuff.py'
 __author__ = 'nerdguyahmad'
-__version__ = '1.4.0'
+__version__ = '1.4.1'
 __license__ = 'MIT'
 __copyright__ = '2021-present nerdguyahmad.'
 
