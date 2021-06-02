@@ -13,5 +13,5 @@ IMAGE_TYPES = ['aww', 'duck',
 	'harrypottermemes','facepalm']
 JOKE_TYPES = ['any', 'dev', 'spooky', 'pun']
 PLANS = ['', 'pro', 'ultra', 'biz', 'mega']
-VERSIONS = ['2', '3', '4']
+VERSIONS = ['3', '4']
 SERVERS = ['primary', 'backup', 'unstable']
