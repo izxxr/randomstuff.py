@@ -11,7 +11,7 @@ class Client:
 	
 	Parameters
 	----------
-	key (str): Your API authentication key.
+	api_key (str): Your API authentication key.
 	version (str) (optional): The version number of API. It is 4 by default. Set it to 3 if you want to use v3.
 	suppress_warnings (bool) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
 
@@ -24,7 +24,7 @@ class Client:
 	close(): Closes the session.
 
 	"""
-	def __init__(self, key: str, version: str = '4', suppress_warnings: bool = False):
+	def __init__(self, api_key: str, version: str = '4', suppress_warnings: bool = False):
 		if version == '2':
 			raise DeprecationWarning("Version 2 has been deprecated. Please migrate to version 4 as soon as possible.")
 			return
@@ -34,10 +34,10 @@ class Client:
 			return
 
 		self.version = "v"+version
-		self.key = key
+		self.api_key = api_key
 		self.suppress_warnings = suppress_warnings
 		self.session = requests.Session()
-		self.session.headers.update({'x-api-key': self.key})
+		self.session.headers.update({'x-api-key': self.api_key})
 		
 		if self.version == 'v3':
 			_warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
@@ -191,7 +191,7 @@ class AsyncClient:
 	
 	Parameters
 	----------
-	key (str): Your API authentication key.
+	api_key (str): Your API authentication key.
 	version (str) (optional): The version number of API. It is 3 by default set it to 2 if you want to use v2.
 	suppress_warnings (bool) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
 
@@ -205,7 +205,7 @@ class AsyncClient:
 	async close(): Closes the session.
 	
 	"""
-	def __init__(self, key: str, version: str = '3', suppress_warnings: bool = False):
+	def __init__(self, api_key: str, version: str = '3', suppress_warnings: bool = False):
 		if version == '2':
 			raise DeprecationWarning("Version 2 has been deprecated. Please migrate to version 4 as soon as possible.")
 			return
@@ -215,9 +215,9 @@ class AsyncClient:
 			return
 
 		self.version = "v"+version
-		self.key = key
+		self.api_key = api_key
 		self.suppress_warnings = suppress_warnings
-		self.session = aiohttp.ClientSession(headers={'x-api-key': self.key})
+		self.session = aiohttp.ClientSession(headers={'x-api-key': self.api_key})
 		
 		if self.version == 'v3':
 			_warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')

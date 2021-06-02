@@ -24,7 +24,7 @@ Here are few examples to get you started.
 ```py
 import randomstuff
 
-client = randomstuff.Client(key='api-key-here')
+client = randomstuff.Client(api_key='api-key-here')
 
 response = client.get_ai_response("Hi there")
 client.close()
@@ -35,7 +35,7 @@ print(response)
 ```py
 import randomstuff
 
-client = randomstuff.Client(key='api-key-here')
+client = randomstuff.Client(api_key='api-key-here')
 
 response = client.get_joke(type="any")
 client.close()
@@ -46,7 +46,7 @@ print(response.joke)
 ```py
 import randomstuff
 
-client = randomstuff.Client(key='api-key-here')
+client = randomstuff.Client(api_key='api-key-here')
 
 response = client.get_image(type="any")
 client.close()
@@ -59,7 +59,7 @@ This library also supports async usage.
 import randomstuff
 import asyncio
 
-client = randomstuff.AsyncClient(key="api-key-here")
+client = randomstuff.AsyncClient(api_key="api-key-here")
 
 async def coro():
   response = await client.get_ai_response("Hello world")
