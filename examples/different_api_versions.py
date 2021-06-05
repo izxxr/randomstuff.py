@@ -4,7 +4,7 @@
 
 Warning! We don't recommend the use of V3 anymore! v4 is the latest and supported version! Please use v4 for general usage!
 
-If you have a program running the API version 3, You don't have to worry about changing your code, This wrapper deals with it for you.
+If you have a program running the API version 3, Please read migration guide on our documentation.
 """
 import randomstuff
 
