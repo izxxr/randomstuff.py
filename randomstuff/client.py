@@ -1,7 +1,6 @@
 from .errors import *
 from .constants import *
 from .objects import *
-from colorama import Fore, init
 import aiohttp
 import requests
 import random
@@ -47,10 +46,8 @@ class Client:
 		if self.suppress_warnings:
 			return
 		else:
-			init()
-			print(Fore.YELLOW+"[WARNING] "+warning)
-			print(Fore.CYAN+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client.")
-			print(Fore.RESET)
+			print("\u001b[33m"+"[WARNING] "+warning)
+			print("\u001b[36m"+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client." + "\u001b[0m")
 
 	def get_ai_response(self, 
 		message:str, 
