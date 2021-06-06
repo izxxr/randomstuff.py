@@ -7,7 +7,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 setup(
 	name='randomstuff.py',
 	version='1.4.2',
-	description='An easy to use python API wrapper for Random Stuff API.',
+	description='An easy to use & feature-rich python API wrapper for Random Stuff API.',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
 	url='https://github.com/nerdguyahmad/randomstuff.py',
@@ -28,7 +28,7 @@ setup(
 	],
 	keywords='api-wrapper randomstuff api wrapper',
 	project_urls={
-    'Documentation': 'https://github.com/nerdguyahmad/randomstuff.py/wiki',
+    'Documentation': 'https://nerdguyahmad.gitbook.io/randomstuff',
     'Source': 'https://github.com/nerdguyahmad/randomstuff.py',
     'Tracker': 'https://github.com/nerdguyahmad/randomstuff.py/issues',
 	},
