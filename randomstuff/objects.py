@@ -1,5 +1,3 @@
-from .flags import *
-
 class BaseObject:
 	"""Super class for most of the objects used in the library
 
