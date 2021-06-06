@@ -282,9 +282,8 @@ class AsyncClient(Client):
 			elif response.status_code >= 500:
 				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
 				return
-		
 
-		return AIResponse(await response.json())[0]['message']
+		return AIResponse(await response.json())
 
 	
 
