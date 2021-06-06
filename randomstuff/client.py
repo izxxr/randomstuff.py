@@ -142,7 +142,6 @@ class Client:
 			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
 			return
 
-		
 		return AIResponse(response.json())
 
 	
@@ -263,22 +262,22 @@ class AsyncClient(Client):
 				'language': kwargs.get('language', 'en'), 
 			}
 
-			if plan == '':
-				response = await self._session.get(f'{self._base_url}/ai', params=params)
-			else:
-				response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
+		if plan == '':
+			response = await self._session.get(f'{self._base_url}/ai', params=params)
+		else:
+			response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
-			if response.status == 401:
-				raise AuthError(response.text)
-				return
+		if response.status == 401:
+			raise AuthError(response.text)
+			return
 
-			elif response.status == 403:
-				raise PlanError(response.text)
-				return
+		elif response.status == 403:
+			raise PlanError(response.text)
+			return
 
-			elif response.status >= 500:
-				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-				return
+		elif response.status >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
 
 		return AIResponse(await response.json())
 

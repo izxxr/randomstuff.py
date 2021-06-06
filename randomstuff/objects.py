@@ -18,9 +18,9 @@ class BaseObject:
 			self.api_key = data[0].get('api_key', None) # NoneType when using version 4
 			
 			if self.success == None:
-				self.response_time = data[1].get('response_time', None) # NoneType in version 3
+				self.response_time = data[1].get('response_time') # NoneType in version 3
 			else:
-				self.response_time = data[1].get('response_time')
+				self.response_time = None
 			return
 
 		if self.is_joke:
