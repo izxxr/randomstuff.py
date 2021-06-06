@@ -8,8 +8,7 @@ An easy to use python API wrapper for Random Stuff API.
 :licence: MIT. See LICENSE for more details.
 """
 
-from .flags import *
-from .joke import *
+from .objects import *
 from .client import *
 from .errors import *
 from .constants import *
@@ -18,8 +17,9 @@ from .constants import *
 __title__ = 'randomstuff.py'
 __summary__ = 'An easy to use and feature rich wrapper for Random Stuff API'
 __uri__ = 'https://github.com/nerdguyahmad/randomstuff.py'
+__email__ = 'nerdguyahmad.contact@gmail.com'
 __author__ = 'nerdguyahmad'
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 __license__ = 'MIT'
 __copyright__ = '2021-present nerdguyahmad.'
 

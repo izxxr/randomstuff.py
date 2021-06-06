@@ -11,11 +11,6 @@ class Flags:
 	sexist (bool): Determines if the joke is marked sexist or not.
 	explicit (bool): Determines if the joke is marked explicit or not.
 	"""
-	def __init__(self, flags):
-		self.nsfw = flags['nsfw']
-		self.religious = flags['religious']
-		self.political = flags['political']
-		self.racist = flags['racist']
-		self.sexist = flags['sexist']
-		self.explicit = flags['explicit']
-		self.dict = flags
+	def __init__(self, data):
+		for _ in data:
+			setattr(self, _, data[_])
