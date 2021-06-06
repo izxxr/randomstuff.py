@@ -128,11 +128,11 @@ class Client:
 				response = self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
 		if response.status_code == 401:
-			raise AuthError(response.text)
+			raise BadAPIKey(response.text)
 			return
 
 		elif response.status_code == 403:
-			raise PlanError(response.text)
+			raise PlanNotAllowed(response.text)
 			return
 
 		elif response.status_code >= 500:
@@ -163,6 +163,18 @@ class Client:
 		elif self.version == '4':
 			response = self._session.get(f'{self._base_url}/image', params={'type': type})
 
+		if response.status_code == 401:
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status_code == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status_code >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
+
 		return response.json()[0]
 
 	def get_joke(self, type: str = 'any') -> Joke:
@@ -183,6 +195,18 @@ class Client:
 		
 		elif self.version == '3':
 			response = self._session.get(f'{self._base_url}/joke/{type}')
+
+		if response.status_code == 401:
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status_code == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status_code >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
 
 		return Joke(response.json())
 
@@ -262,11 +286,11 @@ class AsyncClient(Client):
 				response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
 		if response.status == 401:
-			raise AuthError(response.text)
+			raise BadAPIKey(response.text)
 			return
 
 		elif response.status == 403:
-			raise PlanError(response.text)
+			raise PlanNotAllowed(response.text)
 			return
 
 		elif response.status >= 500:
@@ -289,6 +313,18 @@ class AsyncClient(Client):
 		elif self.version == '3':
 			response = await self._session.get(f'{self._base_url}/joke/{type}')
 
+		if response.status == 401:
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
+
 		return Joke(await response.json())
 
 	async def get_image(self) -> str:
@@ -310,6 +346,18 @@ class AsyncClient(Client):
 
 		elif self.version == '4':
 			response =  await self._session.get(f'{self._base_url}/image', params={'type': type})
+
+		if response.status == 401:
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
 			
 
 		return (await response.json())[0]
