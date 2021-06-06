@@ -1,7 +1,6 @@
 from .errors import *
 from .constants import *
 from .objects import *
-from colorama import Fore, init
 import aiohttp
 import requests
 import random
@@ -47,10 +46,8 @@ class Client:
 		if self.suppress_warnings:
 			return
 		else:
-			init()
-			print(Fore.YELLOW+"[WARNING] "+warning)
-			print(Fore.CYAN+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client.")
-			print(Fore.RESET)
+			print("\u001b[33m"+"[WARNING] "+warning)
+			print("\u001b[36m"+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client." + "\u001b[0m")
 
 	def get_ai_response(self, 
 		message:str, 
@@ -189,6 +186,10 @@ class Client:
 
 		if response.status_code == 401:
 			raise AuthError(response.text)
+    
+    elif response.status_code >= 500:
+				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+				return
 
 		return Joke(response.json())
 
@@ -262,10 +263,10 @@ class AsyncClient(Client):
 				'language': kwargs.get('language', 'en'), 
 			}
 
-		if plan == '':
-			response = await self._session.get(f'{self._base_url}/ai', params=params)
-		else:
-			response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
+			if plan == '':
+				response = await self._session.get(f'{self._base_url}/ai', params=params)
+			else:
+				response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
 		if response.status == 401:
 			raise AuthError(response.text)
@@ -278,7 +279,8 @@ class AsyncClient(Client):
 		elif response.status >= 500:
 			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
 			return
-
+		
+    
 		return AIResponse(await response.json())
 
 	
@@ -294,9 +296,6 @@ class AsyncClient(Client):
 			response = await self._session.get(f'{self._base_url}/joke', params={'type': type})
 		elif self.version == '3':
 			response = await self._session.get(f'{self._base_url}/joke/{type}')
-
-		if response.status == 401:
-			raise AuthError(response.text)
 
 		return Joke(await response.json())
 
