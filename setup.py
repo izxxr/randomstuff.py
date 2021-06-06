@@ -32,7 +32,7 @@ setup(
     'Source': 'https://github.com/nerdguyahmad/randomstuff.py',
     'Tracker': 'https://github.com/nerdguyahmad/randomstuff.py/issues',
 	},
-	install_requires=['aiohttp', 'requests', 'colorama'],
+	install_requires=['aiohttp', 'requests'],
 	python_requires='>=3.6',
 	packages=find_packages(include=['randomstuff', 'randomstuff.*']),
 
