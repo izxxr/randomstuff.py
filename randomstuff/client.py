@@ -186,6 +186,10 @@ class Client:
 
 		if response.status_code == 401:
 			raise AuthError(response.text)
+    
+    elif response.status_code >= 500:
+				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+				return
 
 		return Joke(response.json())
 
@@ -253,6 +257,10 @@ class AsyncClient(Client):
 				raise AuthError(response.text)
 				return
 
+      elif response.status_code >= 500:
+				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+				return
+
 		elif self.version == '4':
 			params = {
 				'message': message, 
@@ -299,6 +307,9 @@ class AsyncClient(Client):
 		if response.status == 401:
 			raise AuthError(response.text)
 
+    elif response.status_code >= 500:
+				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+				return
 		return Joke(await response.json())
 
 	async def get_image(self) -> str:
