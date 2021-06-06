@@ -138,6 +138,10 @@ class Client:
 			raise PlanError(response.text)
 			return
 
+		elif response.status_code >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
+
 		
 		return AIResponse(response.json())
 
@@ -249,10 +253,6 @@ class AsyncClient(Client):
 			else:
 				response = await self._session.get(f'{self._base_url}/{plan}/ai/response', params=params)
 
-			if response.status == 401:
-				raise AuthError(response.text)
-				return
-
 		elif self.version == '4':
 			params = {
 				'message': message, 
@@ -274,6 +274,10 @@ class AsyncClient(Client):
 
 			elif response.status == 403:
 				raise PlanError(response.text)
+				return
+
+			elif response.status >= 500:
+				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
 				return
 
 		return AIResponse(await response.json())
