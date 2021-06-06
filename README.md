@@ -44,7 +44,7 @@ client = randomstuff.Client(api_key='api-key-here')
 
 response = client.get_ai_response("Hi there")
 client.close()
-print(response)
+print(response.message)
 ```
 
 ### Getting random joke
@@ -80,7 +80,7 @@ client = randomstuff.AsyncClient(api_key="api-key-here")
 async def coro():
   response = await client.get_ai_response("Hello world")
   await client.close()  
-  print(response)
+  print(response.message)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(coro())

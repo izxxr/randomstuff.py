@@ -1,7 +1,6 @@
 from .errors import *
 from .constants import *
-from .constants import _warn
-from .joke import *
+from .objects import *
 import aiohttp
 import requests
 import random
@@ -21,7 +20,7 @@ class Client:
 	get_ai_response(message: str, plan: str = '', **kwargs): Get random AI response.
 	get_image(type: str = 'any'): Get random image.
 	get_joke(type: str = 'any'): Get random joke.
-	close(): Closes the session.
+	close(): Closes the _session.
 
 	"""
 	def __init__(self, api_key: str, version: str = '4', suppress_warnings: bool = False):
@@ -30,22 +29,30 @@ class Client:
 			return
 
 		if not version in VERSIONS:
-			raise VersionError("Invalid API version was provided. Use `3` or `4` only.")
+			raise InvalidVersion("Invalid API version was provided. Use `3` or `4` only.")
 			return
 
-		self.version = "v"+version
+		self.version = version
 		self.api_key = api_key
 		self.suppress_warnings = suppress_warnings
-		self.session = requests.Session()
-		self.session.headers.update({'x-api-key': self.api_key})
+		self._base_url = BASE_URL + "/" + "v" + self.version
+		self._session = requests.Session()
+		self._session.headers.update({'x-api-key': self.api_key})
 		
-		if self.version == 'v3':
-			_warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
-		
+		if self.version == '3':
+			self._warn('You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
+	
+	def _warn(self, warning):
+		if self.suppress_warnings:
+			return
+		else:
+			print("\u001b[33m"+"[WARNING] "+warning)
+			print("\u001b[36m"+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client." + "\u001b[0m")
+
 	def get_ai_response(self, 
 		message:str, 
 		plan:str='', 
-		**kwargs):
+		**kwargs) -> AIResponse:
 		"""Gets AI response
 
 		This method has version based parameters
@@ -62,7 +69,7 @@ class Client:
 			type (optional) (str) : Language in which response is required. Defaults to `en`.
 			bot_name (optional) (str) : The bot's name. Used in responses. Defaults to `RSA`
 			dev_name (optional) (str) : The developer's name. Used in responses. Defaults to `PGamerX`
-			unique_id (optional) (str) : The session specific user ID. Use this to make sessions for
+			unique_id (optional) (str) : The _session specific user ID. Use this to make _sessions for
 									     certain user.
 		
 		Version 4 specific:
@@ -72,11 +79,11 @@ class Client:
 									  an option but don't use it as it is highly unstable.
 			master (optional) (str) : The developer's name. Used in responses. Defaults to `PGamerX`
 			bot (optional) (str) : The bot's name. Used in responses. Defaults to `RSA`
-			uid (optional) (str) : The session specific user ID. Use this to make sessions for
+			uid (optional) (str) : The _session specific user ID. Use this to make _sessions for
 							       certain user.
 		
 		Returns:
-			str: The response as a string
+			AIResponse: The response as an AI Response object.
 
 		Raises:
 			randomstuff.AuthError: The API key is invalid
@@ -91,7 +98,7 @@ class Client:
 			raise ServerError(f"Invalid server type choose from {SERVERS}.") 
 			return
 
-		if self.version == 'v3':
+		if self.version == '3':
 			params = {
 				'message': message, 
 				'lang': kwargs.get('lang', 'en'), 
@@ -101,16 +108,11 @@ class Client:
 				'unique_id': kwargs.get('unique_id', ''),
 			}
 			if plan == '':
-				response = self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
+				response = self._session.get(f'{self._base_url}/ai/response', params=params)
 			else:
-				response = self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
+				response = self._session.get(f'{self._base_url}/{plan}/ai/response', params=params)
 
-			if response.status_code == 401:
-				raise AuthError(response.text)
-				return
-
-
-		elif self.version == 'v4':
+		elif self.version == '4':
 			params = {
 				'message': message, 
 				'server': kwargs.get('server', 'primary'), 
@@ -121,22 +123,26 @@ class Client:
 			}
 
 			if plan == '':
-				response = self.session.get(f'{BASE_URL}/v4/ai', params=params)
+				response = self._session.get(f'{self._base_url}/ai', params=params)
 			else:
-				response = self.session.get(f'{BASE_URL}/v4/{plan}/ai', params=params)
+				response = self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
-			if response.status_code == 401:
-				raise AuthError(response.text)
-				return
+		if response.status_code == 401:
+			raise BadAPIKey(response.text)
+			return
 
-			elif response.status_code == 403:
-				raise PlanError(response.text)
-				return
+		elif response.status_code == 403:
+			raise PlanNotAllowed(response.text)
+			return
 
-		return response.json()[0]['message']
+		elif response.status_code >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
+
+		return AIResponse(response.json())
 
 	
-	def get_image(self, type: str = 'any'):
+	def get_image(self, type: str = 'any') -> str:
 		"""Gets an image
 
 		Parameters:
@@ -151,15 +157,27 @@ class Client:
 		if type == 'any':
 			type = random.choice(IMAGE_TYPES)
 
-		if self.version == 'v3':
-			response = self.session.get(f'{BASE_URL}/v3/image/{type}')
+		if self.version == '3':
+			response = self._session.get(f'{self._base_url}/image/{type}')
 
-		elif self.version == 'v4':
-			response = self.session.get(f'{BASE_URL}/v4/image', params={'type': type})
+		elif self.version == '4':
+			response = self._session.get(f'{self._base_url}/image', params={'type': type})
+
+		if response.status_code == 401:
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status_code == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status_code >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
 
 		return response.json()[0]
 
-	def get_joke(self, type: str = 'any'):
+	def get_joke(self, type: str = 'any') -> Joke:
 		"""Gets a joke
 
 		Parameters:
@@ -172,21 +190,31 @@ class Client:
 			randomstuff.AuthError: The API key was invalid.
 		"""
 
-		if self.version == 'v4':
-			response = self.session.get(f'{BASE_URL}/{self.version}/joke', params={'type': type})
-		elif self.version == 'v3':
-			response = self.session.get(f'{BASE_URL}/{self.version}/joke/{type}')
+		if self.version == '4':
+			response = self._session.get(f'{self._base_url}/joke', params={'type': type})
+		
+		elif self.version == '3':
+			response = self._session.get(f'{self._base_url}/joke/{type}')
 
 		if response.status_code == 401:
-			raise AuthError(response.text)
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status_code == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status_code >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
 
 		return Joke(response.json())
 
 	def close(self):
-		"""Closes the session"""
-		self.session.close()
+		"""Closes the _session"""
+		self._session.close()
 
-class AsyncClient:
+class AsyncClient(Client):
 	"""Represent an async client. This is same as `randomstuff.Client` but is suitable for async programs.
 	
 	Parameters
@@ -202,31 +230,18 @@ class AsyncClient:
 	async get_ai_response(message: str, plan: str = '', **kwargs): Get random AI response.
 	async get_image(type: str = 'any'): Get random image.
 	async get_joke(type: str = 'any'): Get random joke.
-	async close(): Closes the session.
+	async close(): Closes the _session.
 	
 	"""
-	def __init__(self, api_key: str, version: str = '3', suppress_warnings: bool = False):
-		if version == '2':
-			raise DeprecationWarning("Version 2 has been deprecated. Please migrate to version 4 as soon as possible.")
-			return
+	def __init__(self, api_key: str, version: str = '4', suppress_warnings: bool = False):
+		super().__init__(api_key, version, suppress_warnings)
+		self._session = aiohttp.ClientSession(headers={'x-api-key': self.api_key})
 
-		if not version in VERSIONS:
-			raise VersionError("Invalid API version was provided. Use `3` or `4` only.")
-			return
-
-		self.version = "v"+version
-		self.api_key = api_key
-		self.suppress_warnings = suppress_warnings
-		self.session = aiohttp.ClientSession(headers={'x-api-key': self.api_key})
-		
-		if self.version == 'v3':
-			_warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
-		
 
 	async def get_ai_response(self, 
 		message:str, 
 		plan:str='', 
-		**kwargs):
+		**kwargs) -> AIResponse:
 		"""
 		This function is a coroutine
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,7 +256,7 @@ class AsyncClient:
 			raise ServerError(f"Invalid server type choose from {SERVERS}.") 
 			return
 
-		if self.version == 'v3':
+		if self.version == '3':
 			params = {
 				'message': message, 
 				'lang': kwargs.get('lang', 'en'), 
@@ -251,15 +266,11 @@ class AsyncClient:
 				'unique_id': kwargs.get('unique_id', ''),
 			}
 			if plan == '':
-				response = await self.session.get(f'{BASE_URL}/v3/ai/response', params=params)
+				response = await self._session.get(f'{self._base_url}/ai/response', params=params)
 			else:
-				response = await self.session.get(f'{BASE_URL}/v3/{plan}/ai/response', params=params)
+				response = await self._session.get(f'{self._base_url}/{plan}/ai/response', params=params)
 
-			if response.status == 401:
-				raise AuthError(response.text)
-				return
-
-		elif self.version == 'v4':
+		elif self.version == '4':
 			params = {
 				'message': message, 
 				'server': kwargs.get('server', 'primary'), 
@@ -270,40 +281,53 @@ class AsyncClient:
 			}
 
 			if plan == '':
-				response = await self.session.get(f'{BASE_URL}/v4/ai', params=params)
+				response = await self._session.get(f'{self._base_url}/ai', params=params)
 			else:
-				response = await self.session.get(f'{BASE_URL}/v4/{plan}/ai', params=params)
+				response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
-			if response.status == 401:
-				raise AuthError(response.text)
-				return
+		if response.status == 401:
+			raise BadAPIKey(response.text)
+			return
 
-			elif response.status == 403:
-				raise PlanError(response.text)
-				return
+		elif response.status == 403:
+			raise PlanNotAllowed(response.text)
+			return
 
-		return (await response.json())[0]['message']
+		elif response.status >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
+		
+		return AIResponse(await response.json())
 
 	
 
-	async def get_joke(self, type: str = 'any'):
+	async def get_joke(self, type: str = 'any') -> Joke:
 		"""
 		This function is a coroutine
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		Equivalent to `Client.get_joke`
 		"""
-		if self.version == 'v4':
-			response = await self.session.get(f'{BASE_URL}/{self.version}/joke', params={'type': type})
-		elif self.version == 'v3':
-			response = await self.session.get(f'{BASE_URL}/{self.version}/joke/{type}')
+		if self.version == '4':
+			response = await self._session.get(f'{self._base_url}/joke', params={'type': type})
+		elif self.version == '3':
+			response = await self._session.get(f'{self._base_url}/joke/{type}')
 
 		if response.status == 401:
-			raise AuthError(response.text)
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
 
 		return Joke(await response.json())
 
-	async def get_image(self):
+	async def get_image(self) -> str:
 		"""
 		This function is a coroutine
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -317,11 +341,23 @@ class AsyncClient:
 		if type == 'any':
 			type = random.choice(IMAGE_TYPES)
 
-		if self.version == 'v3':
-			response = await self.session.get(f'{BASE_URL}/v3/image/{type}')
+		if self.version == '3':
+			response = await self._session.get(f'{self._base_url}/image/{type}')
 
-		elif self.version == 'v4':
-			response =  await self.session.get(f'{BASE_URL}/v4/image', params={'type': type})
+		elif self.version == '4':
+			response =  await self._session.get(f'{self._base_url}/image', params={'type': type})
+
+		if response.status == 401:
+			raise BadAPIKey(response.text)
+			return
+
+		elif response.status == 403:
+			raise PlanNotAllowed(response.text)
+			return
+
+		elif response.status >= 500:
+			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
+			return
 			
 
 		return (await response.json())[0]
@@ -331,7 +367,7 @@ class AsyncClient:
 		This function is a coroutine
 		----------------------------
 
-		Closes a session
+		Closes a _session
 
 		"""
-		await self.session.close()
+		await self._session.close()
