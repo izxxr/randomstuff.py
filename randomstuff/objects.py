@@ -15,12 +15,14 @@ class BaseObject:
 		self.is_joke = kwargs.get('is_joke', False)
 
 		if self.is_ai_response:
-			# [{'success': True, 
-			# 'message': 'He who has a why to live can bear almost any how.', 
-			# 'api_key': 'bPGRtW6hJMRe'}]
-
 			self.message = data[0].get('message')
-			self.response_time = data[1].get('response_time', None)
+			self.success = data[0].get('success', None) # NoneType when using version 4
+			self.api_key = data[0].get('api_key', None) # NoneType when using version 4
+			
+			if self.success == None:
+				self.response_time = data[1].get('response_time', None) # NoneType in version 3
+			else:
+				self.response_time = data[1].get('response_time')
 			return
 
 		if self.is_joke:
