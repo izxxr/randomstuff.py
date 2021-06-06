@@ -273,7 +273,6 @@ class AsyncClient(Client):
 			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
 			return
 		
-    
 		return AIResponse(await response.json())
 
 	
