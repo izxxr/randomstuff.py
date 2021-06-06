@@ -184,13 +184,6 @@ class Client:
 		elif self.version == '3':
 			response = self._session.get(f'{self._base_url}/joke/{type}')
 
-		if response.status_code == 401:
-			raise AuthError(response.text)
-    
-    elif response.status_code >= 500:
-				raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-				return
-
 		return Joke(response.json())
 
 	def close(self):
