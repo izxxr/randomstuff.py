@@ -11,13 +11,14 @@
     <img src=https://img.shields.io/badge/Stable_Version-1.4.1-informational>
   </p>
   <p align='center'>
-    An easy to use python API wrapper for the Random Stuff API.
+    An easy to use, feature rich, highly customisable and async pythonic API wrapper for the Random Stuff API.
   </p>
 </div>
 <br>
 
 ## Features
 - Easy-to-use & Organized
+- Customisable
 - Designed to be as optimized as possible
 - Wraps the entire API including both versions, 3 and 4.
 - Supports both async and sync
