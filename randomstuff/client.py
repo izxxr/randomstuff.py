@@ -327,7 +327,7 @@ class AsyncClient(Client):
 
 		return Joke(await response.json())
 
-	async def get_image(self) -> str:
+	async def get_image(self, type:str = 'any') -> str:
 		"""
 		This function is a coroutine
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
