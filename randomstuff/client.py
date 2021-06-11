@@ -231,7 +231,7 @@ class Client:
 
 		_check_coro(self)
 
-		response = self._session.get(f"{self._base_url}/pro/waifu", params={'type': type})
+		response = self._session.get(f"{self._base_url}/{plan}/waifu", params={'type': type})
 
 		_check_status(response)
 
