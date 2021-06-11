@@ -37,6 +37,7 @@ class BaseObject:
 			else:
 				setattr(self, _, self.data[_])
 
+
 class Joke(BaseObject):
 	"""Represents a Joke
 
@@ -81,6 +82,17 @@ class Flags(BaseObject):
 	racist (bool): Determines if the joke is marked racist or not.
 	sexist (bool): Determines if the joke is marked sexist or not.
 	explicit (bool): Determines if the joke is marked explicit or not.
+	"""
+	def __init__(self, data):
+		super().__init__(data)
+
+class Waifu(BaseObject):
+	"""Represents a waifu returned by API
+
+	Attributes
+	----------
+	
+	url (str) : The URL to waifu image.
 	"""
 	def __init__(self, data):
 		super().__init__(data)
