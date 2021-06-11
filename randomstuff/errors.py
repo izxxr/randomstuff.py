@@ -10,6 +10,10 @@ class ArgumentError(Exception):
 	"""Super class for argument related errors"""
 	pass
 
+class InvalidType(Exception):
+	"""Raised upon invalid (unsupported) type of parameter provided"""
+	pass
+
 class InvalidVersionError(ArgumentError):
 	"""
 	Inherits from `ArgumentError`
@@ -52,7 +56,7 @@ class PlanNotAllowed(Exception):
 	"""
 	pass
 
-class BadAPIKey:
+class BadAPIKey(Exception):
 	"""
 	Inherits from `Forbiddem`
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
