@@ -1,7 +1,9 @@
 from .errors import *
 from .constants import *
 from .objects import *
+from ._helper import _check_coro, _check_status, _warn
 import aiohttp
+import inspect
 import requests
 import random
 
@@ -24,8 +26,8 @@ class Client:
 
 	"""
 	def __init__(self, api_key: str, version: str = '4', suppress_warnings: bool = False):
-		if version == '2':
-			raise DeprecationWarning("Version 2 has been deprecated. Please migrate to version 4 as soon as possible.")
+		if version in DEPRECATED_VERSIONS:
+			raise DeprecationWarning(f"Version {version} has been deprecated. Please migrate to version {version[-1]} as soon as possible.")
 			return
 
 		if not version in VERSIONS:
@@ -40,14 +42,8 @@ class Client:
 		self._session.headers.update({'x-api-key': self.api_key})
 		
 		if self.version == '3':
-			self._warn('You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
+			_warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
 	
-	def _warn(self, warning):
-		if self.suppress_warnings:
-			return
-		else:
-			print("\u001b[33m"+"[WARNING] "+warning)
-			print("\u001b[36m"+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client." + "\u001b[0m")
 
 	def get_ai_response(self, 
 		message:str, 
@@ -98,6 +94,8 @@ class Client:
 			raise ServerError(f"Invalid server type choose from {SERVERS}.") 
 			return
 
+		_check_coro(self)
+
 		if self.version == '3':
 			params = {
 				'message': message, 
@@ -119,7 +117,7 @@ class Client:
 				'master': kwargs.get('master', 'PGamerX'), 
 				'bot': kwargs.get('bot', 'RSA'), 
 				'uid': kwargs.get('uid', ''), 
-				'language': kwargs.get('language', 'en'), 
+				'language': kwargs.get('language', 'en')
 			}
 
 			if plan == '':
@@ -127,17 +125,7 @@ class Client:
 			else:
 				response = self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
-		if response.status_code == 401:
-			raise BadAPIKey(response.text)
-			return
-
-		elif response.status_code == 403:
-			raise PlanNotAllowed(response.text)
-			return
-
-		elif response.status_code >= 500:
-			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-			return
+		_check_status(response)
 
 		return AIResponse(response.json())
 
@@ -154,8 +142,16 @@ class Client:
 		Raises:
 			randomstuff.AuthError: The API key was invalid.
 		"""
+		
+
 		if type == 'any':
 			type = random.choice(IMAGE_TYPES)
+
+		if not type in IMAGE_TYPES:
+			raise InvalidType('Invalid image type provided.')
+			return
+
+		_check_coro(self)
 
 		if self.version == '3':
 			response = self._session.get(f'{self._base_url}/image/{type}')
@@ -163,17 +159,7 @@ class Client:
 		elif self.version == '4':
 			response = self._session.get(f'{self._base_url}/image', params={'type': type})
 
-		if response.status_code == 401:
-			raise BadAPIKey(response.text)
-			return
-
-		elif response.status_code == 403:
-			raise PlanNotAllowed(response.text)
-			return
-
-		elif response.status_code >= 500:
-			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-			return
+		_check_status(response)
 
 		return response.json()[0]
 
@@ -189,6 +175,13 @@ class Client:
 		Raises:
 			randomstuff.AuthError: The API key was invalid.
 		"""
+		
+
+		if not type in JOKE_TYPES:
+			raise InvalidType('Invalid Joke type provided.')
+			return
+
+		_check_coro(self)
 
 		if self.version == '4':
 			response = self._session.get(f'{self._base_url}/joke', params={'type': type})
@@ -196,19 +189,53 @@ class Client:
 		elif self.version == '3':
 			response = self._session.get(f'{self._base_url}/joke/{type}')
 
-		if response.status_code == 401:
-			raise BadAPIKey(response.text)
-			return
-
-		elif response.status_code == 403:
-			raise PlanNotAllowed(response.text)
-			return
-
-		elif response.status_code >= 500:
-			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-			return
+		_check_status(response)
 
 		return Joke(response.json())
+
+	def get_waifu(self, plan:str, type:str):
+		"""Gets a random waifu pic (SFW)
+		
+		Parameters:
+			type (str) : The type of waifu. Can be one from the table below:
+			
+			|:-------:|
+			|  Types  |
+			|:-------:|
+			|  waifu  |
+			|  neko   |
+			| shinobu |
+			| megumin |
+			|  bully  |
+			| cuddle  |
+			|:-------:|
+
+		Returns:	
+			Waifu
+
+		Raises:
+			BadAPIKey: The API key was invalid.
+			HTTPError: An error occured while connecting to API.
+
+		"""
+		if self.version == '3':
+			raise InvalidVersion("Version 3 does not support this method.")
+			return
+
+		if not type in WAIFU_TYPES:
+			raise InvalidType("Invalid waifu type provided")
+			return
+
+		if not plan in PLANS:
+			raise InvalidPlanError("The plan provided is invalid.")
+
+		_check_coro(self)
+
+		response = self._session.get(f"{self._base_url}/pro/waifu", params={'type': type})
+
+		_check_status(response)
+
+		return Waifu(response.json()[0])
 
 	def close(self):
 		"""Closes the _session"""
@@ -285,17 +312,7 @@ class AsyncClient(Client):
 			else:
 				response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
-		if response.status == 401:
-			raise BadAPIKey(response.text)
-			return
-
-		elif response.status == 403:
-			raise PlanNotAllowed(response.text)
-			return
-
-		elif response.status >= 500:
-			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-			return
+		_check_status(response)
 		
 		return AIResponse(await response.json())
 
@@ -313,17 +330,7 @@ class AsyncClient(Client):
 		elif self.version == '3':
 			response = await self._session.get(f'{self._base_url}/joke/{type}')
 
-		if response.status == 401:
-			raise BadAPIKey(response.text)
-			return
-
-		elif response.status == 403:
-			raise PlanNotAllowed(response.text)
-			return
-
-		elif response.status >= 500:
-			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-			return
+		_check_status(response)
 
 		return Joke(await response.json())
 
@@ -347,20 +354,55 @@ class AsyncClient(Client):
 		elif self.version == '4':
 			response =  await self._session.get(f'{self._base_url}/image', params={'type': type})
 
-		if response.status == 401:
-			raise BadAPIKey(response.text)
-			return
-
-		elif response.status == 403:
-			raise PlanNotAllowed(response.text)
-			return
-
-		elif response.status >= 500:
-			raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}")
-			return
+		_check_status(response)
 			
-
 		return (await response.json())[0]
+
+	async def get_waifu(self, plan:str, type:str):
+		"""
+		This function is a coroutine
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		Gets a random waifu pic (SFW)
+		
+		Parameters:
+			type (str) : The type of waifu. Can be one from the table below:
+			
+			|:-------:|
+			|  Types  |
+			|:-------:|
+			|  waifu  |
+			|  neko   |
+			| shinobu |
+			| megumin |
+			|  bully  |
+			| cuddle  |
+			|:-------:|
+
+		Returns:	
+			Waifu
+
+		Raises:
+			BadAPIKey: The API key was invalid.
+			HTTPError: An error occured while connecting to API.
+
+		"""
+		if self.version == '3':
+			raise InvalidVersion("Version 3 does not support this method.")
+			return
+
+		if not type in WAIFU_TYPES:
+			raise InvalidType("Invalid waifu type provided")
+			return
+
+		if not plan in PLANS:
+			raise InvalidPlanError("The plan provided is invalid.")
+
+		response = await self._session.get(f"{self._base_url}/pro/waifu", params={'type': type})
+
+		_check_status(response)
+
+		return Waifu((await response.json())[0])
 
 	async def close(self):
 		"""
