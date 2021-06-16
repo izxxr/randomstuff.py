@@ -32,8 +32,5 @@ def _check_status(response):
         return
 
     elif status >= 500:
-        if type(response).__name__ == 'Response': # Client
-            raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status_code}", response.status_code)
-            return
-        else:
-            raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {response.status}", response.status)
+        raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {status}", status=status)
+        return
