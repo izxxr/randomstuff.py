@@ -296,6 +296,7 @@ class AsyncClient(Client):
 
         Equivalent to `Client.get_ai_response`
         """
+
         if not plan in PLANS:
             raise PlanError(F"Invalid Plan. Choose from {PLANS}")
             return
