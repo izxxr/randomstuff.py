@@ -8,7 +8,7 @@
     <img src=https://img.shields.io/pypi/dm/randomstuff.py?color=success&label=PyPi%20Downloads&style=flat-square>
     <img src=https://img.shields.io/github/issues/nerdguyahmad/randomstuff.py?color=success&label=Active%20Issues&style=flat-square>
     <img src=https://img.shields.io/badge/License-MIT-informational>
-    <img src=https://img.shields.io/badge/Stable_Version-1.4.5-informational>
+    <img src=https://img.shields.io/badge/Stable_Version-1.5.0-informational>
   </p>
   <p align='center'>
     An easy to use, feature rich, highly customisable and async pythonic API wrapper for the Random Stuff API.
@@ -41,33 +41,27 @@ Here are few examples to get you started.
 ```py
 import randomstuff
 
-client = randomstuff.Client(api_key='api-key-here')
-
-response = client.get_ai_response("Hi there")
-client.close()
-print(response.message)
+with randomstuff.Client(api_key='api-key-here') as client:
+  response = client.get_ai_response("Hi there")
+  print(response.message)
 ```
 
 ### Getting random joke
 ```py
 import randomstuff
 
-client = randomstuff.Client(api_key='api-key-here')
-
-response = client.get_joke(type="any")
-client.close()
-print(response.joke)
+with randomstuff.Client(api_key='api-key-here') as client:
+  response = client.get_joke(type="any")
+  print(response.joke)
 ```
 
 ### Getting random image
 ```py
 import randomstuff
 
-client = randomstuff.Client(api_key='api-key-here')
-
-response = client.get_image(type="any")
-client.close()
-print(response)
+with randomstuff.Client(api_key='api-key-here') as client:
+  response = client.get_image(type="any")
+  print(response)
 ```
 
 ## Async Support
@@ -76,12 +70,10 @@ This library also supports async usage.
 import randomstuff
 import asyncio
 
-client = randomstuff.AsyncClient(api_key="api-key-here")
-
 async def coro():
-  response = await client.get_ai_response("Hello world")
-  await client.close()  
-  print(response.message)
+  async with randomstuff.AsyncClient(api_key="api-key-here") as client:
+    response = await client.get_ai_response("Hello world")
+    print(response.message)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(coro())
