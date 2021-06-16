@@ -4,10 +4,10 @@ class HTTPError(Exception):
     This usually indicates that library couldn't establish a connection with base URL (or API). This is raised
     when API is has something wrong.
     """
-    def __init__(self, message, status_code):
+    def __init__(self, message, status):
         super().__init__(message)
         self.message = message
-        self.status_code = status_code
+        self.status = status
 
 class ArgumentError(Exception):
     """Super class for argument related errors"""
