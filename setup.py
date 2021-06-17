@@ -6,7 +6,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
 	name='randomstuff.py',
-	version='1.5.0',
+	version='1.5.1',
 	description='An easy to use & feature-rich python API wrapper for Random Stuff API.',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
@@ -32,7 +32,7 @@ setup(
     'Source': 'https://github.com/nerdguyahmad/randomstuff.py',
     'Tracker': 'https://github.com/nerdguyahmad/randomstuff.py/issues',
 	},
-	install_requires=['aiohttp', 'requests'],
+	install_requires=['aiohttp', 'requests', 'colorama'],
 	python_requires='>=3.6',
 	packages=find_packages(include=['randomstuff', 'randomstuff.*']),
 
