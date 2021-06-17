@@ -51,7 +51,7 @@ class Forbidden(Exception):
 
 class PlanNotAllowed(Exception):
     """
-    Inherits from `Forbiddem`
+    Inherits from `Forbidden`
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Raised when the plan provided is not allowed on the API key. This is usually because you don't have that plan
@@ -61,10 +61,18 @@ class PlanNotAllowed(Exception):
 
 class BadAPIKey(Exception):
     """
-    Inherits from `Forbiddem`
+    Inherits from `Forbidden`
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Raised when the API key provided is not valid.
     """
     pass
 
+class RateLimited(Exception):
+    """
+    Inherits from `Forbidden`
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Raised when the API key is being Rate Limited.
+    """
+    pass

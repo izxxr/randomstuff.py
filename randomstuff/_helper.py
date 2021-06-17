@@ -1,10 +1,12 @@
 import inspect
+from colorama import init
 from .errors import *
 
 def _warn(client, warning):
     if client.suppress_warnings:
         return
     else:
+        init()
         print("\u001b[33m"+"[WARNING] "+warning)
         print("\u001b[36m"+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client." + "\u001b[0m")
 
@@ -29,6 +31,10 @@ def _check_status(response):
 
     elif status == 403:
         raise PlanNotAllowed(response.text)
+        return
+    
+    elif status == 429:
+        raise RateLimited(response.text)
         return
 
     elif status >= 500:
