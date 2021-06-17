@@ -84,18 +84,18 @@ This library is powered by community contributions. Feel free to open a pull req
 - Briefly explain what you did.
 - Use this template after your PR description and mark certain checkboxes with `x` as per your PR.
 ```md
-- [] This is a code change (Improvement, bug fix, new feature)
-  - [] Bug fix
-  - [] Improvement
-  - [] Feature added
+- [ ] This is a code change (Improvement, bug fix, new feature)
+  - [ ] Bug fix
+  - [ ] Improvement
+  - [ ] Feature added
 
-- [] The change is not a code change (ReadMe change, examples add, examples update etc.)
-  - [] README change
-  - [] Example Change
-    - [] Added Example
-    - [] Removed Example
-    - [] Updated Example
+- [ ] The change is not a code change (ReadMe change, examples add, examples update etc.)
+  - [ ] README change
+  - [ ] Example Change
+    - [ ] Added Example
+    - [ ] Removed Example
+    - [ ] Updated Example
   
-- [] The change are tested
-- [] Change is breaking change
+- [ ] The change are tested
+- [ ] Change is breaking change
 ```
