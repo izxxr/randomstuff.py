@@ -101,11 +101,11 @@ class Client:
             randomstuff.ServerError: Specific to v4, Raised upon invalid server type.
         """
         if not plan in PLANS:
-            raise PlanError(F"Invalid Plan. Choose from {PLANS}")
+            raise InvalidPlanError(F"Invalid Plan. Choose from {PLANS}")
             return
 
         if not kwargs.get('server', 'primary') in SERVERS:
-            raise ServerError(f"Invalid server type choose from {SERVERS}.") 
+            raise InvalidServerError(f"Invalid server type choose from {SERVERS}.") 
             return
 
         _check_coro(self)
@@ -298,11 +298,11 @@ class AsyncClient(Client):
         """
 
         if not plan in PLANS:
-            raise PlanError(F"Invalid Plan. Choose from {PLANS}")
+            raise InvalidPlanError(F"Invalid Plan. Choose from {PLANS}")
             return
 
         if not kwargs.get('server', 'primary') in SERVERS:
-            raise ServerError(f"Invalid server type choose from {SERVERS}.") 
+            raise InvalidServerError(f"Invalid server type choose from {SERVERS}.") 
             return
 
         if self.version == '3':
