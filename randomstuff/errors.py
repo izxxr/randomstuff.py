@@ -17,7 +17,7 @@ class InvalidType(Exception):
     """Raised upon invalid (unsupported) type of parameter provided"""
     pass
 
-class InvalidVersionError(ArgumentError):
+class InvalidVersionError(InvalidType):
     """
     Inherits from `ArgumentError`
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,7 +26,7 @@ class InvalidVersionError(ArgumentError):
     """
     pass
 
-class InvalidPlanError(ArgumentError):
+class InvalidPlanError(InvalidType):
     """
     Inherits from `ArgumentError`
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +35,7 @@ class InvalidPlanError(ArgumentError):
     """
     pass
 
-class InvalidServerError(ArgumentError):
+class InvalidServerError(InvalidType):
     """
     Inherits from `ArgumentError`
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
