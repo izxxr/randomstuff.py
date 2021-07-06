@@ -40,7 +40,7 @@ class Client:
             return
 
         if not version in VERSIONS:
-            raise InvalidVersion("Invalid API version was provided. Use `3` or `4` only.")
+            raise InvalidVersionError("Invalid API version was provided. Use `3` or `4` only.")
             return
 
         self.version = version
@@ -52,6 +52,12 @@ class Client:
         
         if self.version == '3':
             _warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
+    
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, tb):
+        self._session.close()
     
     def __enter__(self):
         return self
@@ -234,7 +240,7 @@ class Client:
 
         """
         if self.version == '3':
-            raise InvalidVersion("Version 3 does not support this method.")
+            raise InvalidVersionError("Version 3 does not support this method.")
             return
 
         if not type in WAIFU_TYPES:
@@ -284,6 +290,12 @@ class AsyncClient(Client):
         
     async def __aexit__(self, exc_type, exc_value, tb):
         await self._session.close()
+
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, tb):
+        raise UnsupportedOperation("Could not close the client session. Please use \"async with\" instead\n")
 
 
     async def get_ai_response(self, 
@@ -410,7 +422,7 @@ class AsyncClient(Client):
 
         """
         if self.version == '3':
-            raise InvalidVersion("Version 3 does not support this method.")
+            raise InvalidVersionError("Version 3 does not support this method.")
             return
 
         if not type in WAIFU_TYPES:
