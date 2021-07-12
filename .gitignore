@@ -135,3 +135,6 @@ tests
 .gitignore
 .pypirc
 test.bat
+
+# useless files
+delete.md
