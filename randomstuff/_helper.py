@@ -2,7 +2,7 @@ import inspect
 from colorama import init
 from .errors import *
 
-def _warn(client, warning):
+def _warn(client, warning) -> None:
     if client.suppress_warnings:
         return
     else:
@@ -10,7 +10,7 @@ def _warn(client, warning):
         print("\u001b[33m"+"[WARNING] "+warning)
         print("\u001b[36m"+"\n[INFO] Disable warnings by setting suppress_warnings to `True` in client." + "\u001b[0m")
 
-def _check_coro(client):
+def _check_coro(client) -> None:
     """Private method to initiate warning if the enivornment is asynchronus"""
     tup = inspect.stack()[2]
     try:
@@ -19,7 +19,7 @@ def _check_coro(client):
     except KeyError:
         return
 
-def _check_status(response):
+def _check_status(response) -> None:
     try:
         status = response.status_code
     except AttributeError:

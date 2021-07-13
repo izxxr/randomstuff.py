@@ -27,6 +27,9 @@ class InvalidVersionError(ArgumentError):
     pass
 
 class UnsupportedOperation(Exception):
+    """
+    Raised upon using AsyncClient class in a synchronous context manager
+    """
     pass
 
 class InvalidPlanError(InvalidType):

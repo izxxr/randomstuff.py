@@ -39,32 +39,12 @@ def format_joke(joke: Joke, format_as='{setup}... {delivery}'):
     Raises:
         TypeError: The passed argument isn't a Joke object.
     """
+
+    if not isinstance(joke, Joke):
+        raise TypeError("parameter joke must be of type Joke")
+
     if joke.type == 'single':
         return joke
     else:
         joke.joke = format_as.format(setup=joke.joke['setup'], delivery=joke.joke['delivery'])
         return joke
-
-def get_safe_joke(client: Union[Client, AsyncClient], type:str='any'):
-    """A highly useful method to get a joke marked safe.
-    
-    Jokes usually returned are safe 90% of the time but this function can filter any 'unsafe' joke.
-    """
-    if isinstance(client, AsyncClient):
-        loop = asyncio.get_event_loop()
-        joke = loop.run_until_complete(client.get_joke(type))
-
-        while not joke.safe:
-            joke = loop.run_until_complete(client.get_joke(type))
-
-        return joke
-
-    if isinstance(client, Client):
-        joke = client.get_joke(type)
-        while not joke.safe:
-            joke = client.get_joke(type)
-
-        return joke
-
-
-    
