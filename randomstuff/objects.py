@@ -1,33 +1,35 @@
+from typing import List, Union, Optional
 class BaseObject:
     """Super class for most of the objects used in the library
 
     Attributes
     ----------
-    data (dict) : The raw data as returned by API.
-    is_response : 
+    data (Union[List[dict], dict]) : The raw data as returned by API.
+    is_ai_response (bool) : True if the data is for an AI response
+    is_joke (bool) : True if the data is for a joke
 
     """
-    def __init__(self, data, **kwargs):
+    def __init__(self, data : Union[List[dict], dict], **kwargs):
         self.data = data
-        self.is_ai_response = kwargs.get('is_ai_response', False)
-        self.is_joke = kwargs.get('is_joke', False)
+        self.is_ai_response : bool = kwargs.get('is_ai_response', False)
+        self.is_joke : bool = kwargs.get('is_joke', False)
 
         if self.is_ai_response:
-            self.message = data[0].get('message')
-            self.success = data[0].get('success', None) # NoneType when using version 4
-            self.api_key = data[0].get('api_key', None) # NoneType when using version 4
+            self.message : str = data[0].get('message')
+            self.success : bool = data[0].get('success', None) # NoneType when using version 4
+            self.api_key : str = data[0].get('api_key', None) # NoneType when using version 4
             
-            if self.success == None:
-                self.response_time = data[1].get('response_time') # NoneType in version 3
+            if not self.success:
+                self.response_time : Optional[str] = data[1].get('response_time') # NoneType in version 3
             else:
-                self.response_time = None
+                self.response_time : Optional[str] = None
             return
 
         if self.is_joke:
             if self.data['type'] == 'twopart':
-                setattr(self, 'joke', {'setup': self.data['setup'], 'delivery': self.data['delivery']})
+                self.joke = {'setup': self.data['setup'], 'delivery': self.data['delivery']}
             else:
-                setattr(self, 'joke', self.data['joke'])
+                self.joke = self.data['joke']
 
         for _ in self.data.keys():
             if _ == 'flags':
@@ -59,7 +61,7 @@ class Joke(BaseObject):
         super().__init__(data, is_joke=True)
 
     def __str__(self):
-        if type(self.joke).__name__ == 'str':
+        if isinstance(self.joke, str):
             return self.joke
         return f"{self.joke['setup']}. {self.joke['delivery']}"
 
@@ -80,7 +82,7 @@ class AIResponse(BaseObject):
     ---------
 
     message : The main message.
-    response_time : The response time returned by API.
+    response_time : The response time returned by API. (NoneType in V3)
     """
     def __init__(self, data):
         super().__init__(data, is_ai_response=True)

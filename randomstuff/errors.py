@@ -17,12 +17,18 @@ class InvalidType(Exception):
     """Raised upon invalid (unsupported) type of parameter provided"""
     pass
 
-class InvalidVersionError(InvalidType):
+class InvalidVersionError(ArgumentError):
     """
     Inherits from `ArgumentError`
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Raised upon invalid version passed
+    """
+    pass
+
+class UnsupportedOperation(Exception):
+    """
+    Raised upon using AsyncClient class in a synchronous context manager
     """
     pass
 

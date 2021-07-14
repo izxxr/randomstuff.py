@@ -12,9 +12,9 @@ with randomstuff.Client(key="api-key") as client:
   print("Language: ", joke.lang) # The language of joke.
 
   print("\n=== Flags ===\n")
-  print("NSFW: ", jokes.flags.nsfw) # Determines if the joke is NSFW or not. If this is `True`, The joke is NSFW.
-  print("Religious: ", jokes.flags.religious) # Determines if the joke is religious or not. If this is `True`, The joke is religious.
-  print("Political: ", jokes.flags.political) # Determines if the joke is political or not. If this is `True`, The joke is political.
-  print("Racist: ", jokes.flags.racist) # Determines if the joke is racist or not. If this is `True`, The joke is racist.
-  print("Sexist: ", jokes.flags.sexist) # Determines if the joke is sexist or not. If this is `True`, The joke is sexist. 
-  print("Explicit: ", jokes.flags.explicit) # Determines if the joke is explicit or not. If this is `True`, The joke is explicit.
+  print("NSFW: ", joke.flags.nsfw) # Determines if the joke is NSFW or not. If this is `True`, The joke is NSFW.
+  print("Religious: ", joke.flags.religious) # Determines if the joke is religious or not. If this is `True`, The joke is religious.
+  print("Political: ", joke.flags.political) # Determines if the joke is political or not. If this is `True`, The joke is political.
+  print("Racist: ", joke.flags.racist) # Determines if the joke is racist or not. If this is `True`, The joke is racist.
+  print("Sexist: ", joke.flags.sexist) # Determines if the joke is sexist or not. If this is `True`, The joke is sexist. 
+  print("Explicit: ", joke.flags.explicit) # Determines if the joke is explicit or not. If this is `True`, The joke is explicit.

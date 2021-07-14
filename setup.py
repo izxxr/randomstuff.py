@@ -35,7 +35,4 @@ setup(
 	install_requires=['aiohttp', 'requests', 'colorama'],
 	python_requires='>=3.6',
 	packages=find_packages(include=['randomstuff', 'randomstuff.*']),
-
-
-
 	)

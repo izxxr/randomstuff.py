@@ -40,7 +40,7 @@ class Client:
             return
 
         if not version in VERSIONS:
-            raise InvalidVersion("Invalid API version was provided. Use `3` or `4` only.")
+            raise InvalidVersionError("Invalid API version was provided. Use `3` or `4` only.")
             return
 
         self.version = version
@@ -52,6 +52,12 @@ class Client:
         
         if self.version == '3':
             _warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
+    
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, tb):
+        self._session.close()
     
     def __enter__(self):
         return self
@@ -190,7 +196,6 @@ class Client:
         Raises:
             randomstuff.AuthError: The API key was invalid.
         """
-        
 
         if not type in JOKE_TYPES:
             raise InvalidType('Invalid Joke type provided.')
@@ -208,7 +213,19 @@ class Client:
 
         return Joke(response.json())
 
-    def get_waifu(self, plan:str, type:str):
+    def get_safe_joke(self, type: str ='any') -> Joke:
+        """A highly useful method to get a joke marked safe.
+        
+        Jokes usually returned are safe 90% of the time but this function can filter any 'unsafe' joke.
+        """
+        joke = self.get_joke(type)
+        while not joke.safe:
+            joke = self.get_joke(type)
+        
+        return joke
+
+
+    def get_waifu(self, plan: str, type: str) -> Waifu:
         """Gets a random waifu pic (SFW)
         
         Parameters:
@@ -234,7 +251,7 @@ class Client:
 
         """
         if self.version == '3':
-            raise InvalidVersion("Version 3 does not support this method.")
+            raise InvalidVersionError("Version 3 does not support this method.")
             return
 
         if not type in WAIFU_TYPES:
@@ -284,6 +301,12 @@ class AsyncClient(Client):
         
     async def __aexit__(self, exc_type, exc_value, tb):
         await self._session.close()
+
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, tb):
+        raise UnsupportedOperation("Could not close the client session. Please use \"async with\" instead\n")
 
 
     async def get_ai_response(self, 
@@ -356,6 +379,16 @@ class AsyncClient(Client):
 
         return Joke(await response.json())
 
+    async def get_safe_joke(self, type: str = 'any') -> Joke:
+        """A highly useful method to get a joke marked safe.
+        
+        Jokes usually returned are safe 90% of the time but this function can filter any 'unsafe' joke.
+        """
+        joke: Joke = await self.get_joke(type)
+        while not joke.safe:
+            joke = await self.get_joke(type)
+        return joke
+
     async def get_image(self, type:str = 'any') -> str:
         """
         This function is a coroutine
@@ -380,7 +413,7 @@ class AsyncClient(Client):
             
         return (await response.json())[0]
 
-    async def get_waifu(self, plan:str, type:str):
+    async def get_waifu(self, plan:str, type:str) -> Waifu:
         """
         This function is a coroutine
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -410,7 +443,7 @@ class AsyncClient(Client):
 
         """
         if self.version == '3':
-            raise InvalidVersion("Version 3 does not support this method.")
+            raise InvalidVersionError("Version 3 does not support this method.")
             return
 
         if not type in WAIFU_TYPES:
