@@ -1,4 +1,6 @@
 from typing import List, Union, Optional
+
+
 class BaseObject:
     """Super class for most of the objects used in the library
 
@@ -25,22 +27,10 @@ class BaseObject:
                 self.response_time : Optional[str] = None
             return
 
-        if self.is_joke:
-            if self.data['type'] == 'twopart':
-                self.joke = {'setup': self.data['setup'], 'delivery': self.data['delivery']}
-            else:
-                self.joke = self.data['joke']
-
-        for _ in self.data.keys():
-            if _ == 'flags':
-                setattr(self, _, Flags(self.data[_]))
-            elif _ in ['setup', 'twopart']:
-                pass
-            else:
-                setattr(self, _, self.data[_])
 
 
-class Joke(BaseObject):
+
+class Joke:
     """Represents a Joke
 
     Attributes
@@ -48,7 +38,7 @@ class Joke(BaseObject):
 
     category (str): The category of joke.
     type (str): The type of joke.
-    joke (str or dict): The main joke. This can be a `dict` or `str` depending on joke's type.
+    joke (Union[str, TwopartJoke]): The main joke. This can be a `dict` or `str` depending on joke's type.
                         If joke's type is single then this will be `str` otherwise it will be a `dict`
 
     flags (randomstuff.Flags): The flags of joke. This is a `randomstuff.Flags` object. 
@@ -58,7 +48,19 @@ class Joke(BaseObject):
 
     """
     def __init__(self, data):
-        super().__init__(data, is_joke=True)
+        self.data = data
+        if self.data['type'] == 'twopart':
+            self.joke = {'setup': self.data['setup'], 'delivery': self.data['delivery']}
+        else:
+            self.joke = self.data['joke']
+
+        for _ in self.data.keys():
+            if _ == 'flags':
+                setattr(self, _, Flags(self.data[_]))
+            elif _ in ['setup', 'twopart']:
+                pass
+            else:
+                setattr(self, _, self.data[_])
 
     def __str__(self):
         if isinstance(self.joke, str):
@@ -75,7 +77,7 @@ class Joke(BaseObject):
             lang=self.lang,
             )
 
-class AIResponse(BaseObject):
+class AIResponse:
     """Represents an AI response returned from `get_ai_response` method.
     
     Attribues
@@ -85,15 +87,48 @@ class AIResponse(BaseObject):
     response_time : The response time returned by API. (NoneType in V3)
     """
     def __init__(self, data):
-        super().__init__(data, is_ai_response=True)
+        # Universal
+
+        self._message : str = data[0].get('message')
+
+        # Version 3 specific
+
+        self._success : bool = data[0].get('success', None) # NoneType when using version 4
+        self._api_key : str = data[0].get('api_key', None) # NoneType when using version 4
+        
+        # Version 4 specific.
+
+        if not self._success:
+            self._response_time : Optional[str] = data[1].get('response_time') # NoneType in version 3
+        else:
+            self._response_time : Optional[str] = None
+
+        return
+
+    @property
+    def success(self):
+        return self._success
+
+    @property
+    def api_key(self):
+        return self._api_key
+
+    @property
+    def response_time(self):
+        return self._response_time
+
+    @property
+    def message(self):
+        return self._message
+    
+
+    def __repr__(self):
+        return "<AIResponse message={message} response_time={response_time}>".format(message=self.message, response_time=self.response_time)
 
     def __str__(self):
         return self.message
 
-    def __repr__(self):
-        return "<AIResponse message={} response_time={}>".format(message=self.message, response_time=self.response_time)
-
-class Flags(BaseObject):
+class Flags:
     """Represents a joke's flags
 
     Attributes
@@ -107,19 +142,44 @@ class Flags(BaseObject):
     explicit (bool): Determines if the joke is marked explicit or not.
     """
     def __init__(self, data):
-        super().__init__(data)
+        for flag in data.keys():
+            setattr(self, '_'+flag, data[flag])
+
+    @property
+    def nsfw(self):
+        return self._nsfw
+
+    @property
+    def religious(self):
+        return self._religious
+
+    @property
+    def political(self):
+        return self._political
+
+    @property
+    def racist(self):
+        return self._racist
+
+    @property
+    def sexist(self):
+        return self._sexist
+
+    @property
+    def explicit(self):
+        return self._explicit
 
     def __repr__(self):
         return '<Flags nsfw={nsfw} religious={religious} political={political} racist={racist} sexist={sexist} explicit={explicit}>'.format(
-            nsfw=self.nsfw,
-            religious=self.religious,
-            political=self.political,
-            racist=self.racist,
-            sexist=self.sexist,
-            explicit=self.explicit,
+            nsfw=self._nsfw,
+            religious=self._religious,
+            political=self._political,
+            racist=self._racist,
+            sexist=self._sexist,
+            explicit=self._explicit,
             )
 
-class Waifu(BaseObject):
+class Waifu:
     """Represents a waifu returned by API
 
     Attributes
@@ -128,10 +188,16 @@ class Waifu(BaseObject):
     url (str) : The URL to waifu image.
     """
     def __init__(self, data):
-        super().__init__(data)
+        self._url = data.get('url')
+        
+    @property
+    def url(self):
+        return self._url
+
+    def __repr__(self):
+        return "<Waifu url={url}>".format(url=self.url)
 
     def __str__(self):
         return self.url
 
-    def __repr__(self):
-        return "<Waifu url={url}>".format(url=self.url)
+    
