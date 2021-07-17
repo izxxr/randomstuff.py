@@ -8,7 +8,7 @@ class Joke:
 
     category (str): The category of joke.
     type (str): The type of joke.
-    joke (Union[str, TwopartJoke]): The main joke. This can be a `dict` or `str` depending on joke's type.
+    joke (str): The main joke. This can be a `dict` or `str` depending on joke's type.
                         If joke's type is single then this will be `str` otherwise it will be a `dict`
 
     flags (randomstuff.Flags): The flags of joke. This is a `randomstuff.Flags` object. 
@@ -18,19 +18,47 @@ class Joke:
 
     """
     def __init__(self, data):
-        self.data = data
-        if self.data['type'] == 'twopart':
-            self.joke = {'setup': self.data['setup'], 'delivery': self.data['delivery']}
+        if data['type'] == 'twopart':
+            self._joke = {'setup': data['setup'], 'delivery': data['delivery']}
         else:
-            self.joke = self.data['joke']
+            self._joke = self.data['joke']
 
-        for _ in self.data.keys():
+        for _ in data.keys():
             if _ == 'flags':
-                setattr(self, _, Flags(self.data[_]))
+                setattr(self, '_'+_, Flags(data[_]))
             elif _ in ['setup', 'twopart']:
                 pass
             else:
-                setattr(self, _, self.data[_])
+                setattr(self, '_'+_, data[_])
+
+
+    @property
+    async def joke(self):
+        return self._joke
+
+    @property
+    def flags(self):
+        return self._flags
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def safe(self):
+        return self._safe
+    
+    @property
+    def lang(self):
+        return self._lang
+    
+    @property
+    def category(self):
+        return self._category
 
     def __str__(self):
         if isinstance(self.joke, str):
