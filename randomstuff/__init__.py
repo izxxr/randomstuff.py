@@ -8,10 +8,12 @@ An easy to use python API wrapper for Random Stuff API.
 :licence: MIT. See LICENSE for more details.
 """
 
-from .objects import *
+from .ai_response import *
 from .client import *
-from .errors import *
 from .constants import *
+from .errors import *
+from .joke import *
+from .waifu import *
 # To use randomstuff.utils module import it manually.
 
 __title__ = 'randomstuff.py'

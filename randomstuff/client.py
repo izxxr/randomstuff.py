@@ -1,6 +1,8 @@
 from .errors import *
 from .constants import *
-from .objects import *
+from .ai_response import *
+from .joke import *
+from .waifu import *
 from ._helper import _check_coro, _check_status, _warn
 import aiohttp
 import inspect
