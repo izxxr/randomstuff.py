@@ -50,6 +50,15 @@ class InvalidServerError(InvalidType):
     """
     pass
 
+class InvalidCityError(Exception):
+    """
+    Inherits from `ArgumentError`
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Raised upon invalid city passed in get_weather method.
+    """
+    pass
+
 
 class Forbidden(Exception):
     """Super class for 403, 401 and other related status codes."""
