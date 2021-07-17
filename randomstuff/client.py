@@ -3,7 +3,9 @@ from .constants import *
 from .ai_response import *
 from .joke import *
 from .waifu import *
+from .weather import *
 from ._helper import _check_coro, _check_status, _warn
+from typing import Optional
 import aiohttp
 import inspect
 import requests
@@ -15,28 +17,34 @@ class Client:
     
     Parameters
     ----------
-    api_key (str): Your API authentication key.
-    version (str) (optional): The version number of API. It is 4 by default. Set it to 3 if you want to use v3.
-    suppress_warnings (bool) (optional): If this is set to True, You won't get any console warnings. This does not suppress errors.
+      api_key : str
+        Your API authentication key.
+
+      version : Optional[str]
+        The version number of API. It is 4 by default. Set it to 3 if you want to use v3.
+      
+      suppress_warnings Optional[bool]: 
+        If this is set to True, You won't get any console warnings. This does not suppress errors.
 
     Methods 
     -------
 
-    get_ai_response(message: str, plan: str = '', **kwargs): Get random AI response.
-    get_image(type: str = 'any'): Get random image.
-    get_joke(type: str = 'any'): Get random joke.
-    close(): Closes the _session.
+      get_ai_response(message: str, plan: str = '', **kwargs): Get random AI response.
+      get_image(type: str = 'any'): Get random image.
+      get_joke(type: str = 'any'): Get random joke.
+      close(): Closes the _session.
 
     Basic Example
     -------------
 
     import randomstuff
 
-    client = randomstuff.Client(api_key="API KEY")
-    resp = client.get_ai_response('hi')
-    print(resp.message)
+    with randomstuff.Client(api_key='Your API key here') as client:
+        response = client.get_ai_response('Hi')
+        print(response.message)
+
     """
-    def __init__(self, api_key: str, version: str = '4', suppress_warnings: bool = False):
+    def __init__(self, api_key: str, version: Optional[str] = '4', suppress_warnings: Optional[bool] = False):
         if version in DEPRECATED_VERSIONS:
             raise DeprecationWarning(f"Version {version} has been deprecated. Please migrate to version {version[-1]} as soon as possible.")
             return
@@ -150,7 +158,22 @@ class Client:
 
         _check_status(response)
 
-        return AIResponse(response.json())
+        response = response.json()
+
+        if self.version == '3':
+            obj = AIResponse(
+                message=...,
+                status=...,
+                api_key=...
+                )
+
+        elif self.version == '4':
+            obj = AIResponse(
+                message=response[0].get('message'),
+                response_time=response[1].get('response_time')
+                )
+
+        return obj
 
     
     def get_image(self, type: str = 'any') -> str:
@@ -213,7 +236,17 @@ class Client:
 
         _check_status(response)
 
-        return Joke(response.json())
+        response = response.json()
+
+        return Joke(
+            category=response.get('category'),
+            type=response.get('type'),
+            joke=response.get('joke') if response.get('joke') else {'setup': response.get('setup'), 'delivery': response.get('delivery')},
+            flags=JokeFlags(**response.get('flags')),
+            id=response.get('id'),
+            safe=response.get('safe'),
+            lang=response.get('lang')
+            )
 
     def get_safe_joke(self, type: str ='any') -> Joke:
         """A highly useful method to get a joke marked safe.
@@ -269,7 +302,43 @@ class Client:
 
         _check_status(response)
 
-        return Waifu(response.json()[0])
+        return Waifu(url=response.json()[0]['url'])
+
+    def get_weather(self, city: str) -> Weather:
+        '''
+        Gets the weather of provided city.
+
+        Parameters:
+
+          city : str 
+            The city of which weather should be returned.
+
+        Returns:
+          The weather of the provided city.
+
+        Return Type:
+          Weather
+
+        Raises:
+          InvalidCityError : The city provided is invalid or not found.
+        '''
+        if self.version == '3':
+            raise InvalidVersionError("Version 3 does not support this method.")
+            return
+
+        response = self._session.get(f"{self._base_url}/weather", params={'city': city})
+
+        _check_status(response)
+        response = response.json()
+
+        if response[0].get('error') is True:
+            raise InvalidCityError(response[0].get('message'))
+
+        return Weather(
+            location=WeatherLocation(**response[0].get('location', {})),
+            current=CurrentWeather(**response[0].get('current', {})),
+            forecast=[WeatherForecast(**forecast) for forecast in response[0].get('forecast')]
+            )
 
     def close(self):
         """Closes the _session"""
@@ -361,7 +430,22 @@ class AsyncClient(Client):
 
         _check_status(response)
 
-        return AIResponse(await response.json())
+        response = await response.json()
+
+        if self.version == '3':
+            obj = AIResponse(
+                message=...,
+                status=...,
+                api_key=...
+                )
+
+        elif self.version == '4':
+            obj = AIResponse(
+                message=response[0].get('message'),
+                response_time=response[1].get('response_time')
+                )
+
+        return obj
 
     
 
@@ -372,6 +456,9 @@ class AsyncClient(Client):
 
         Equivalent to `Client.get_joke`
         """
+        if not type in JOKE_TYPES:
+            raise InvalidType('The joke type is not valid.')
+            
         if self.version == '4':
             response = await self._session.get(f'{self._base_url}/joke', params={'type': type})
         elif self.version == '3':
@@ -379,7 +466,17 @@ class AsyncClient(Client):
 
         _check_status(response)
 
-        return Joke(await response.json())
+        response = await response.json()
+
+        return Joke(
+            category=response.get('category'),
+            type=response.get('type'),
+            joke=response.get('joke') if response.get('joke') else {'setup': response.get('setup'), 'delivery': response.get('delivery')},
+            flags=JokeFlags(**response.get('flags')),
+            id=response.get('id'),
+            safe=response.get('safe'),
+            lang=response.get('lang')
+            )
 
     async def get_safe_joke(self, type: str = 'any') -> Joke:
         """A highly useful method to get a joke marked safe.
@@ -459,7 +556,26 @@ class AsyncClient(Client):
 
         _check_status(response)
 
-        return Waifu((await response.json())[0])
+        return Waifu(url=(await response.json())[0]['url'])
+
+    async def get_weather(self, city: str) -> Weather:
+        if self.version == '3':
+            raise InvalidVersionError("Version 3 does not support this method.")
+            return
+
+        response = await self._session.get(f"{self._base_url}/weather", params={'city': city})
+
+        _check_status(response)
+        response = await response.json()
+
+        if response[0].get('error') is True:
+            raise InvalidCityError(response[0].get('message'))
+
+        return Weather(
+            location=WeatherLocation(**response[0].get('location', {})),
+            current=CurrentWeather(**response[0].get('current', {})),
+            forecast=[WeatherForecast(**forecast) for forecast in response[0].get('forecast')]
+            )
 
     async def close(self):
         """
