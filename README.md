@@ -71,7 +71,7 @@ import randomstuff
 with randomstuff.Client(api_key='api-key-here') as client:
   weather = client.get_weather("new york")
   # print(weather) # Uncomment to see full object.
-  print("Current weather in {} is {} degree centigrade".format(weather.location.name, weather.current.temprature))
+  print("Current weather in {} is {} degree centigrade".format(weather.location.name, weather.current.temperature))
 ```
 
 ## Async Support
