@@ -3,6 +3,7 @@ from .constants import *
 from .ai_response import *
 from .joke import *
 from .waifu import *
+from .weather import *
 from ._helper import _check_coro, _check_status, _warn
 from typing import Optional
 import aiohttp
@@ -303,6 +304,42 @@ class Client:
 
         return Waifu(url=response.json()[0]['url'])
 
+    def get_weather(self, city: str) -> Weather:
+        '''
+        Gets the weather of provided city.
+
+        Parameters:
+
+          city : str 
+            The city of which weather should be returned.
+
+        Returns:
+          The weather of the provided city.
+
+        Return Type:
+          Weather
+
+        Raises:
+          InvalidCityError : The city provided is invalid or not found.
+        '''
+        if self.version == '3':
+            raise InvalidVersionError("Version 3 does not support this method.")
+            return
+
+        response = self._session.get(f"{self._base_url}/weather", params={'city': city})
+
+        _check_status(response)
+        response = response.json()
+
+        if response[0].get('error') is True:
+            raise InvalidCityError(response[0].get('message'))
+
+        return Weather(
+            location=WeatherLocation(**response[0].get('location', {})),
+            current=CurrentWeather(**response[0].get('current', {})),
+            forecast=[WeatherForecast(**forecast) for forecast in response[0].get('forecast')]
+            )
+
     def close(self):
         """Closes the _session"""
         self._session.close()
@@ -393,7 +430,7 @@ class AsyncClient(Client):
 
         _check_status(response)
 
-        response = response.json()
+        response = await response.json()
 
         if self.version == '3':
             obj = AIResponse(
@@ -419,12 +456,17 @@ class AsyncClient(Client):
 
         Equivalent to `Client.get_joke`
         """
+        if not type in JOKE_TYPES:
+            raise InvalidType('The joke type is not valid.')
+            
         if self.version == '4':
             response = await self._session.get(f'{self._base_url}/joke', params={'type': type})
         elif self.version == '3':
             response = await self._session.get(f'{self._base_url}/joke/{type}')
 
         _check_status(response)
+
+        response = await response.json()
 
         return Joke(
             category=response.get('category'),
@@ -515,6 +557,25 @@ class AsyncClient(Client):
         _check_status(response)
 
         return Waifu(url=(await response.json())[0]['url'])
+
+    async def get_weather(self, city: str) -> Weather:
+        if self.version == '3':
+            raise InvalidVersionError("Version 3 does not support this method.")
+            return
+
+        response = await self._session.get(f"{self._base_url}/weather", params={'city': city})
+
+        _check_status(response)
+        response = await response.json()
+
+        if response[0].get('error') is True:
+            raise InvalidCityError(response[0].get('message'))
+
+        return Weather(
+            location=WeatherLocation(**response[0].get('location', {})),
+            current=CurrentWeather(**response[0].get('current', {})),
+            forecast=[WeatherForecast(**forecast) for forecast in response[0].get('forecast')]
+            )
 
     async def close(self):
         """
