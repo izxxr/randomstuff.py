@@ -21,7 +21,7 @@ __summary__ = 'An easy to use and feature rich wrapper for Random Stuff API'
 __uri__ = 'https://github.com/nerdguyahmad/randomstuff.py'
 __email__ = 'nerdguyahmad.contact@gmail.com'
 __author__ = 'nerdguyahmad'
-__version__ = '1.5.2'
+__version__ = '1.6.0'
 __license__ = 'MIT'
 __copyright__ = '2021-present nerdguyahmad.'
 
