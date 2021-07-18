@@ -116,7 +116,7 @@ class CurrentWeather:
       observation_point : str
         An alias for `observationpoint` attribute.
 
-      feels_list : str
+      feels_like : str
         An alias for the `feelslike` attribute.
 
       wind_display : str

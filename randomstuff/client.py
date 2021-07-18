@@ -162,9 +162,9 @@ class Client:
 
         if self.version == '3':
             obj = AIResponse(
-                message=...,
-                status=...,
-                api_key=...
+                message=response[0].get('message'),
+                success=response[0].get('success'),
+                api_key=response[0].get('api_key')
                 )
 
         elif self.version == '4':
@@ -434,9 +434,9 @@ class AsyncClient(Client):
 
         if self.version == '3':
             obj = AIResponse(
-                message=...,
-                status=...,
-                api_key=...
+                message=response[0].get('message'),
+                success=response[0].get('success'),
+                api_key=response[0].get('api_key')
                 )
 
         elif self.version == '4':
