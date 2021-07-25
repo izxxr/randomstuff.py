@@ -11,8 +11,36 @@ import inspect
 import requests
 import random
 
+class BaseClient:
+    """Represents the base of both synchronus and asynchronous clients.
 
-class Client:
+    This is an internal class and is not meant to be used.
+    """
+
+    def __init__(self, 
+        api_key: str, 
+        version: Optional[str] = '4', 
+        suppress_warnings: Optional[bool] = False):
+
+        if version in DEPRECATED_VERSIONS:
+            raise DeprecationWarning(f"Version {version} has been deprecated. Please migrate to version {version[-1]} as soon as possible.")
+            return
+
+        if not version in VERSIONS:
+            raise InvalidVersionError("Invalid API version was provided. Use `3` or `4` only.")
+            return
+
+        self.version = version
+        self.api_key = api_key
+        self.suppress_warnings = suppress_warnings
+        self._base_url = f"{BASE_URL}/v{self.version}"
+
+        if self.version == '3':
+            _warn(self, 'You are using v3 of API which will soon be deprecated, Please migrate to version 4 as soon as possible.\n')
+    
+
+
+class Client(BaseClient):
     """Represent a client
     
     Parameters
@@ -23,15 +51,19 @@ class Client:
       version : Optional[str]
         The version number of API. It is 4 by default. Set it to 3 if you want to use v3.
       
+      plan : Optional[str]
+        The plan to use. You must have a plan assigned to your API key.
+
       suppress_warnings Optional[bool]: 
         If this is set to True, You won't get any console warnings. This does not suppress errors.
-
+        
     Methods 
     -------
 
       get_ai_response(message: str, plan: str = '', **kwargs): Get random AI response.
       get_image(type: str = 'any'): Get random image.
       get_joke(type: str = 'any'): Get random joke.
+      get_weather(city: str): Gets weather of provided city.
       close(): Closes the _session.
 
     Basic Example
@@ -44,25 +76,15 @@ class Client:
         print(response.message)
 
     """
-    def __init__(self, api_key: str, version: Optional[str] = '4', suppress_warnings: Optional[bool] = False):
-        if version in DEPRECATED_VERSIONS:
-            raise DeprecationWarning(f"Version {version} has been deprecated. Please migrate to version {version[-1]} as soon as possible.")
-            return
-
-        if not version in VERSIONS:
-            raise InvalidVersionError("Invalid API version was provided. Use `3` or `4` only.")
-            return
-
-        self.version = version
-        self.api_key = api_key
-        self.suppress_warnings = suppress_warnings
-        self._base_url = BASE_URL + "/" + "v" + self.version
+    def __init__(self, api_key: str, version: Optional[str] = '4', plan: Optional[str] = None, suppress_warnings: Optional[bool] = False):
+        super().__init__(
+            api_key=api_key,
+            version=version,
+            suppress_warnings=suppress_warnings
+            )
         self._session = requests.Session()
         self._session.headers.update({'x-api-key': self.api_key})
-        
-        if self.version == '3':
-            _warn(self, 'You are using v3 of API. Version 4 is out with improvements. Please migrate as soon as possible.\n')
-    
+
     async def __aenter__(self):
         return self
 
@@ -408,10 +430,6 @@ class AsyncClient(Client):
                 'dev_name': kwargs.get('dev_name', 'PGamerX'),
                 'unique_id': kwargs.get('unique_id', ''),
             }
-            if plan == '':
-                response = await self._session.get(f'{self._base_url}/ai/response', params=params)
-            else:
-                response = await self._session.get(f'{self._base_url}/{plan}/ai/response', params=params)
 
         elif self.version == '4':
             params = {
@@ -423,10 +441,10 @@ class AsyncClient(Client):
                 'language': kwargs.get('language', 'en'), 
             }
 
-            if plan == '':
-                response = await self._session.get(f'{self._base_url}/ai', params=params)
-            else:
-                response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
+        if plan == '':
+            response = await self._session.get(f'{self._base_url}/ai', params=params)
+        else:
+            response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
 
         _check_status(response)
 
