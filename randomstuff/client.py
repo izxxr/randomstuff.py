@@ -183,10 +183,10 @@ class Client(BaseClient):
 
         Version 3 specific:
             lang (optional) (str) : Language in which response is required. Defaults to `en`.
-            type (optional) (str) : Language in which response is required. Defaults to `en`.
+            type (optional) (str) : Type of response. Can be `stable` or `unstable`
             bot_name (optional) (str) : The bot's name. Used in responses. Defaults to `RSA`
             dev_name (optional) (str) : The developer's name. Used in responses. Defaults to `PGamerX`
-            unique_id (optional) (str) : The _session specific user ID. Use this to make _sessions for
+            unique_id (optional) (str) : The session specific user ID. Use this to make sessions for
                                          certain user.
         
         Version 4 specific:
@@ -196,19 +196,38 @@ class Client(BaseClient):
                                       an option but don't use it as it is highly unstable.
             master (optional) (str) : The developer's name. Used in responses. Defaults to `PGamerX`
             bot (optional) (str) : The bot's name. Used in responses. Defaults to `RSA`
-            uid (optional) (str) : The _session specific user ID. Use this to make _sessions for
+            uid (optional) (str) : The session specific user ID. Use this to make sessions for
                                    certain user.
         
         Version 5 specific:
-            ...
+            uid (optional) (str) : The session specific user ID. Use this to make sessions for
+                                   certain user.
+            server: The server from which the response should be obtained, Can be either `main` or `backup`
 
-        Returns:
-            AIResponse: The response as an AI Response object.
+            Customisation parameters:
+                - bot_name
+                - bot_master
+                - bot_gender
+                - bot_age
+                - bot_company
+                - bot_location
+                - bot_email
+                - bot_build
+                - bot_birth_year
+                - bot_birth_date
+                - bot_birth_place
+                - bot_favorite_color
+                - bot_favorite_book
+                - bot_favorite_band
+                - bot_favorite_artist
+                - bot_favorite_actress
+                - bot_favorite_actor
 
-        Raises:
-            randomstuff.AuthError: The API key is invalid
-            randomstuff.PlanError: Plan is either forbidden, invalid etc.
-            randomstuff.ServerError: Specific to v4, Raised upon invalid server type.
+                All these parameters are used for customistation of responses. They are
+                all optional and their default values can be found at:
+                https://docs.pgamerx.com/endpoints/ai#customisation
+
+        Returns: Response as an AIResponse object.
         """
         _check_coro(self)
         params, url = self._resolve_ai_params(message, plan, **kwargs)
@@ -216,7 +235,7 @@ class Client(BaseClient):
         response = self._session.get(url, params=params)
         _check_status(response)
         response = response.json()
-        
+
         if self.version == '3':
             return AIResponse(
                 message=response[0].get('message'),
@@ -253,9 +272,6 @@ class Client(BaseClient):
 
         Returns:
             str: Link of image
-
-        Raises:
-            randomstuff.AuthError: The API key was invalid.
         """
         
 
