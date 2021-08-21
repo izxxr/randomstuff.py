@@ -1,5 +1,6 @@
 from .errors import *
 from .constants import *
+from .covid import *
 from .ai_response import *
 from .joke import *
 from .waifu import *
@@ -273,8 +274,6 @@ class Client(BaseClient):
         Returns:
             str: Link of image
         """
-        
-
         if type == 'any':
             type = random.choice(IMAGE_TYPES)
 
@@ -287,29 +286,34 @@ class Client(BaseClient):
         if self.version == '3':
             response = self._session.get(f'{self._base_url}/image/{type}')
 
-        elif self.version == '4':
+        elif self.version in ['4', '5']:
             response = self._session.get(f'{self._base_url}/image', params={'type': type})
 
         _check_status(response)
 
         return response.json()[0]
 
-    def get_joke(self, type: str = 'any') -> Joke:
+    def get_joke(self, type: str = 'any', blacklist: list = []) -> Joke:
         """Gets a joke
 
         Parameters:
-            type (str) (optional): The type of joke. By default, it is 'any'.
+            type : Optional[str]
+                The type of joke. By default, it is 'any'.
+           
+            blacklist : Optional[JokeFlags]
+                The list of flags to blacklist. You can provide the list of flags that you
+                don't want to be True in returned jokes. Useful to get SFW jokes only.
 
         Returns:
             randomstuff.Joke: The `randomstuff.Joke` object for the joke.
-
-        Raises:
-            randomstuff.AuthError: The API key was invalid.
         """
 
         if not type in JOKE_TYPES:
             raise InvalidType('Invalid Joke type provided.')
             return
+
+        if self.version in ['3', '4'] and blacklist:
+            raise InvalidVersionError('blacklisting of flags is only supported on version 5.')
 
         _check_coro(self)
 
@@ -318,6 +322,13 @@ class Client(BaseClient):
         
         elif self.version == '3':
             response = self._session.get(f'{self._base_url}/joke/{type}')
+
+        elif self.version == '5':
+            blist = ''
+            if blacklist:
+                blist = ','.join(blacklist)
+
+            response = self._session.get(f'{self._base_url}/premium/joke', params={'type': type, 'blacklist': blist})            
 
         _check_status(response)
 
@@ -333,19 +344,8 @@ class Client(BaseClient):
             lang=response.get('lang')
             )
 
-    def get_safe_joke(self, type: str ='any') -> Joke:
-        """A highly useful method to get a joke marked safe.
-        
-        Jokes usually returned are safe 90% of the time but this function can filter any 'unsafe' joke.
-        """
-        joke = self.get_joke(type)
-        while not joke.safe:
-            joke = self.get_joke(type)
-        
-        return joke
 
-
-    def get_waifu(self, plan: str, type: str) -> Waifu:
+    def get_waifu(self, plan: str, type: str = 'any') -> Waifu:
         """Gets a random waifu pic (SFW)
         
         Parameters:
@@ -362,6 +362,8 @@ class Client(BaseClient):
             | cuddle  |
             |:-------:|
 
+            or setting it to `any` will return any type of above.
+
         Returns:    
             Waifu
 
@@ -370,6 +372,9 @@ class Client(BaseClient):
             HTTPError: An error occured while connecting to API.
 
         """
+        if type == 'any':
+            type = random.choice(WAIFU_TYPES)
+
         if self.version == '3':
             raise InvalidVersionError("Version 3 does not support this method.")
             return
@@ -383,7 +388,10 @@ class Client(BaseClient):
 
         _check_coro(self)
 
-        response = self._session.get(f"{self._base_url}/{plan}/waifu", params={'type': type})
+        if self.version == '4':
+            response = self._session.get(f"{self._base_url}/{plan}/waifu", params={'type': type})
+        elif self.version == '5':
+            response = self._session.get(f"{self._base_url}/premium/{plan}/waifu", params={'type': type})
 
         _check_status(response)
 
@@ -423,6 +431,62 @@ class Client(BaseClient):
             location=WeatherLocation(**response[0].get('location', {})),
             current=CurrentWeather(**response[0].get('current', {})),
             forecast=[WeatherForecast(**forecast) for forecast in response[0].get('forecast')]
+            )
+
+    def get_covid_data(self, country: str = None):
+        '''Get covid-19 data of provided country or entire world.
+
+        Parameters:
+
+            country : Optional[str]
+                The country to get covid data of. This can be left unchanged to get data
+                of entire world.
+
+        Returns:
+            Either ``GlobalCovidData`` or ``CountryCovidData`` instance. Note that the global
+            data doesn't has a country attribute and it is different from Country data as it has some
+            additional attributes like ``condition`` and ``active_cases`` which are not in Country data
+            Also in global data, all cases attributes are ``str`` instead of being Cases object like 
+            country data.
+        '''
+        if self.version in ['4', '3']:
+            raise InvalidVersionError(f"Version {self.version} does not support this method.")
+            return
+
+        response = self._session.get(f'{self._base_url}/covid', params={'country': country})
+        _check_status(response)
+        response = response.json()
+
+        if country is None:
+            return GlobalCovidData(
+                total_cases=response.get('totalCases'),
+                total_deaths=response.get('totalDeaths'),
+                total_recovered=response.get('totalRecovered'),
+                active_cases=response.get('activeCases'),
+                closed_cases=response.get('closedCases'),
+                condition=CovidCondition(
+                    mild=response.get('condition')['mild'],
+                    critical=response.get('condition')['critical'],
+                    )
+                )
+
+        return CountryCovidData(
+            country=Country(
+                name=response.get('country')['name'],
+                flag_img=response.get('country')['flagImg']
+                ),
+            cases=Cases(
+                total=response.get('cases')['total'],
+                recovered=response.get('cases')['recovered'],
+                deaths=response.get('cases')['deaths'],
+                ),
+            closed_cases=ClosedCases(
+                total=response.get('closedCases')['total'],
+                percentage=ClosedCasesPercentage(
+                    death=response.get('closedCases')['percentage']['death'],
+                    discharge=response.get('closedCases')['percentage']['discharge']
+                    ),
+                )
             )
 
     def close(self):
