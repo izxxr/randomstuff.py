@@ -512,10 +512,93 @@ class AsyncClient(Client):
     async close(): Closes the _session.
     
     """
-    def __init__(self, api_key: str, version: str = '4', suppress_warnings: bool = False):
-        super().__init__(api_key, version, suppress_warnings)
-        self._session = aiohttp.ClientSession(headers={'x-api-key': self.api_key})
+    def __init__(sself, api_key: str, version: Optional[str] = '5', plan: Optional[str] = None, suppress_warnings: Optional[bool] = False):
+        super().__init__(
+            api_key=api_key,
+            version=version,
+            suppress_warnings=suppress_warnings
+            )
+        self._session = aiohttp.ClientSession()
+        
+        if self.version == '5':
+            self._session.headers.update({'Authorization': self.api_key})
+        else:
+            self._session.headers.update({'x-api-key': self.api_key})
+    
+    async def _resolve_ai_params(self, message:str, plan:str = '', **kwargs):
+        if not plan in PLANS:
+            raise InvalidPlanError(F"Invalid Plan. Choose from {PLANS}")
+            return
 
+        if self.version == '4':
+            if not kwargs.get('server', 'primary') in SERVERS_V4:
+                raise InvalidServerError(f"Invalid server type Must be one from {SERVERS_V3}.") 
+                return
+
+        if self.version == '5':
+            if not kwargs.get('server', 'main') in SERVERS_V5:
+                raise InvalidServerError(f"Invalid server type choose from {SERVERS_V4}.") 
+                return
+
+        if self.version == '3':
+            params = {
+                'message': message, 
+                'lang': kwargs.get('lang', 'en'), 
+                'type': kwargs.get('type', 'stable'), 
+                'bot_name': kwargs.get('bot_name', 'RSA'), 
+                'dev_name': kwargs.get('dev_name', 'PGamerX'),
+                'unique_id': kwargs.get('unique_id', self._randomised_uid),
+            }
+            
+        elif self.version == '4':
+            params = {
+                'message': message, 
+                'server': kwargs.get('server', 'primary'), 
+                'master': kwargs.get('master', 'PGamerX'), 
+                'bot': kwargs.get('bot', 'RSA'), 
+                'uid': kwargs.get('uid', self._randomised_uid), 
+                'language': kwargs.get('language', 'en')
+            }
+
+            if plan == '':
+                response = self._session.get(f'{self._base_url}/ai', params=params)
+            else:
+                response = self._session.get(f'{self._base_url}/{plan}/ai', params=params)
+
+        elif self.version == '5':
+            params = {
+                'message': message,
+                'server': kwargs.get('server', 'main'),
+                'uid': kwargs.get('uid', self._randomised_uid),
+                'bot_name': kwargs.get('name', 'Random Stuff API'),
+                'bot_master': kwargs.get('master', 'PGamerX'),
+                'bot_gender': kwargs.get('gender', 'Male'),
+                'bot_age': kwargs.get('age', '19'),
+                'bot_company': kwargs.get('company', 'PGamerX Studio'),
+                'bot_location': kwargs.get('location', 'India'),
+                'bot_email': kwargs.get('email', 'admin@pgamerx.com'),
+                'bot_build': kwargs.get('build', 'Public'),
+                'bot_birth_year': kwargs.get('birth_year', '2002'),
+                'bot_birth_date': kwargs.get('birth_year', '1st January 2002'),
+                'bot_birth_place': kwargs.get('birth_place', 'India'),
+                'bot_favorite_color': kwargs.get('favorite_color', 'Blue'),
+                'bot_favorite_book': kwargs.get('favorite_book', 'Harry Potter'),
+                'bot_favorite_band': kwargs.get('favorite_band', 'Imagine Doggos'),
+                'bot_favorite_artist': kwargs.get('favorite_artist', 'Eminem'),
+                'bot_favorite_actress': kwargs.get('favorite_actress', 'Emma Watson'),
+                'bot_favorite_actor': kwargs.get('favorite_actor', 'Jim Carrey')
+            }
+
+        if self.version == '3':
+            url = f"{self._base_url}/{plan+'/' if plan else ''}ai/response"
+        elif self.version == '4':
+            url = f"{self._base_url}/{plan+'/' if plan else ''}/ai"
+        elif self.version == '5':
+            url = f"{self._base_url}/{'premium/'+plan+'/' if plan else ''}/ai"
+
+        return params, url
+    
+    
     async def __aenter__(self):
         return self
         
@@ -540,54 +623,36 @@ class AsyncClient(Client):
         Equivalent to `Client.get_ai_response`
         """
 
-        if not plan in PLANS:
-            raise InvalidPlanError(F"Invalid Plan. Choose from {PLANS}")
-            return
+        _check_coro(self)
+        params, url = await self._resolve_ai_params(message, plan, **kwargs)
 
-        if not kwargs.get('server', 'primary') in SERVERS:
-            raise InvalidServerError(f"Invalid server type choose from {SERVERS}.") 
-            return
-
-        if self.version == '3':
-            params = {
-                'message': message, 
-                'lang': kwargs.get('lang', 'en'), 
-                'type': kwargs.get('type', 'stable'), 
-                'bot_name': kwargs.get('bot_name', 'RSA'), 
-                'dev_name': kwargs.get('dev_name', 'PGamerX'),
-                'unique_id': kwargs.get('unique_id', ''),
-            }
-
-        elif self.version == '4':
-            params = {
-                'message': message, 
-                'server': kwargs.get('server', 'primary'), 
-                'master': kwargs.get('master', 'PGamerX'), 
-                'bot': kwargs.get('bot', 'RSA'), 
-                'uid': kwargs.get('uid', ''), 
-                'language': kwargs.get('language', 'en'), 
-            }
-
-        if plan == '':
-            response = await self._session.get(f'{self._base_url}/ai', params=params)
-        else:
-            response = await self._session.get(f'{self._base_url}/{plan}/ai', params=params)
-
+        response = await self._session.get(url, params=params)
         _check_status(response)
-
         response = await response.json()
 
         if self.version == '3':
             obj = AIResponse(
                 message=response[0].get('message'),
+                response=response[0].get('message'),
+                api_key=response[0].get('api_key'),
                 success=response[0].get('success'),
-                api_key=response[0].get('api_key')
                 )
-
         elif self.version == '4':
             obj = AIResponse(
                 message=response[0].get('message'),
-                response_time=response[1].get('response_time')
+                response=response[0].get('message'),
+                response_time=response[1].get('response_time'),
+                success=True,
+                uid=params.get('uid'),
+                server=params.get('server')
+                )
+        elif self.version == '5':
+            obj = AIResponse(
+                message=response[0].get('response'),
+                response=response[0].get('response'),
+                success=True,
+                uid=params.get('uid'),
+                server=params.get('server')
                 )
 
         return obj
