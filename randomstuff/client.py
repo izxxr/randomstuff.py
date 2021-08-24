@@ -659,7 +659,7 @@ class AsyncClient(Client):
 
     
 
-    async def get_joke(self, type: str = 'any') -> Joke:
+    async def get_joke(self, type: str = 'any', blacklist: list = []) -> Joke:
         """
         This function is a coroutine
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -667,17 +667,31 @@ class AsyncClient(Client):
         Equivalent to `Client.get_joke`
         """
         if not type in JOKE_TYPES:
-            raise InvalidType('The joke type is not valid.')
-            
+            raise InvalidType('Invalid Joke type provided.')
+            return
+
+        if self.version in ['3', '4'] and blacklist:
+            raise InvalidVersionError('blacklisting of flags is only supported on version 5.')
+        
+        _check_coro(self)
+
         if self.version == '4':
             response = await self._session.get(f'{self._base_url}/joke', params={'type': type})
+        
         elif self.version == '3':
             response = await self._session.get(f'{self._base_url}/joke/{type}')
+
+        elif self.version == '5':
+            blist = ''
+            if blacklist:
+                blist = ','.join(blacklist)
+
+            response = await self._session.get(f'{self._base_url}/premium/joke', params={'type': type, 'blacklist': blist})            
 
         _check_status(response)
 
         response = await response.json()
-
+        
         return Joke(
             category=response.get('category'),
             type=response.get('type'),
@@ -688,69 +702,41 @@ class AsyncClient(Client):
             lang=response.get('lang')
             )
 
-    async def get_safe_joke(self, type: str = 'any') -> Joke:
-        """A highly useful method to get a joke marked safe.
-        
-        Jokes usually returned are safe 90% of the time but this function can filter any 'unsafe' joke.
-        """
-        joke: Joke = await self.get_joke(type)
-        while not joke.safe:
-            joke = await self.get_joke(type)
-        return joke
-
-    async def get_image(self, type:str = 'any') -> str:
-        """
-        This function is a coroutine
+    async def get_image(self, type: str = 'any') -> str:
+        """This function is a coroutine
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         Equivalent to `Client.get_image`
         """
-        if not type in IMAGE_TYPES:
-            raise TypeError(f"Image type not supported. Choose from {IMAGE_TYPES}")
-            return
-
         if type == 'any':
             type = random.choice(IMAGE_TYPES)
+
+        if not type in IMAGE_TYPES:
+            raise InvalidType('Invalid image type provided.')
+            return
+
+        _check_coro(self)
 
         if self.version == '3':
             response = await self._session.get(f'{self._base_url}/image/{type}')
 
-        elif self.version == '4':
-            response =  await self._session.get(f'{self._base_url}/image', params={'type': type})
+        elif self.version in ['4', '5']:
+            response = await self._session.get(f'{self._base_url}/image', params={'type': type})
 
         _check_status(response)
-            
-        return (await response.json())[0]
 
-    async def get_waifu(self, plan:str, type:str) -> Waifu:
+        return await response.json()[0]
+
+    async def get_waifu(self, plan: str, type: str = 'any') -> Waifu:
         """
         This function is a coroutine
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        Gets a random waifu pic (SFW)
-        
-        Parameters:
-            type (str) : The type of waifu. Can be one from the table below:
-            
-            |:-------:|
-            |  Types  |
-            |:-------:|
-            |  waifu  |
-            |  neko   |
-            | shinobu |
-            | megumin |
-            |  bully  |
-            | cuddle  |
-            |:-------:|
-
-        Returns:    
-            Waifu
-
-        Raises:
-            BadAPIKey: The API key was invalid.
-            HTTPError: An error occured while connecting to API.
-
+        Equivalent to `Client.get_waifu`
         """
+        if type == 'any':
+            type = random.choice(WAIFU_TYPES)
+
         if self.version == '3':
             raise InvalidVersionError("Version 3 does not support this method.")
             return
@@ -762,13 +748,25 @@ class AsyncClient(Client):
         if not plan in PLANS:
             raise InvalidPlanError("The plan provided is invalid.")
 
-        response = await self._session.get(f"{self._base_url}/{plan}/waifu", params={'type': type})
+        _check_coro(self)
+
+        if self.version == '4':
+            response = await self._session.get(f"{self._base_url}/{plan}/waifu", params={'type': type})
+        elif self.version == '5':
+            response = await self._session.get(f"{self._base_url}/premium/{plan}/waifu", params={'type': type})
 
         _check_status(response)
 
-        return Waifu(url=(await response.json())[0]['url'])
+        return Waifu(url=(await response.json()[0]['url']))
 
     async def get_weather(self, city: str) -> Weather:
+        '''
+        This function is a coroutine
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Equivalent to `Client.get_weather`
+        '''
+        
         if self.version == '3':
             raise InvalidVersionError("Version 3 does not support this method.")
             return
@@ -786,7 +784,53 @@ class AsyncClient(Client):
             current=CurrentWeather(**response[0].get('current', {})),
             forecast=[WeatherForecast(**forecast) for forecast in response[0].get('forecast')]
             )
+    
+    async def get_covid_data(self, country: str = None):
+        '''This function is a coroutine
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+        Equivalent to `Client.get_covid_data`
+        '''
+        if self.version in ['4', '3']:
+            raise InvalidVersionError(f"Version {self.version} does not support this method.")
+            return
+
+        response = await self._session.get(f'{self._base_url}/covid', params={'country': country})
+        _check_status(response)
+        response = await response.json()
+
+        if country is None:
+            return GlobalCovidData(
+                total_cases=response.get('totalCases'),
+                total_deaths=response.get('totalDeaths'),
+                total_recovered=response.get('totalRecovered'),
+                active_cases=response.get('activeCases'),
+                closed_cases=response.get('closedCases'),
+                condition=CovidCondition(
+                    mild=response.get('condition')['mild'],
+                    critical=response.get('condition')['critical'],
+                    )
+                )
+
+        return CountryCovidData(
+            country=Country(
+                name=response.get('country')['name'],
+                flag_img=response.get('country')['flagImg']
+                ),
+            cases=Cases(
+                total=response.get('cases')['total'],
+                recovered=response.get('cases')['recovered'],
+                deaths=response.get('cases')['deaths'],
+                ),
+            closed_cases=ClosedCases(
+                total=response.get('closedCases')['total'],
+                percentage=ClosedCasesPercentage(
+                    death=response.get('closedCases')['percentage']['death'],
+                    discharge=response.get('closedCases')['percentage']['discharge']
+                    ),
+                )
+            )
+    
     async def close(self):
         """
         This function is a coroutine
