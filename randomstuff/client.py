@@ -547,7 +547,7 @@ class AsyncClient(Client):
         """
 
         _check_coro(self)
-        params, url = await self._resolve_ai_params(message, plan, **kwargs)
+        params, url = self._resolve_ai_params(message, plan, **kwargs)
 
         response = await self._session.get(url, params=params)
         _check_status(response)
