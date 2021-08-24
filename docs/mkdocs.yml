@@ -1,0 +1,88 @@
+site_name: randomstuff.py
+theme:
+  name: material
+  palette:
+    - accent: green
+    - scheme: default
+      toggle:
+        icon: material/lightbulb
+        name: Toggle Light mode
+    - scheme: slate
+      toggle:
+        icon: material/lightbulb-outline
+        name: Toggle Dark mode
+
+  icon:
+    repo: fontawesome/brands/github
+
+
+  font:
+    text: Ubuntu
+    code: Fira Code
+  
+  features:
+    - navigation.tabs
+    - search.highlight
+    - search.suggest
+    - header.autohide
+
+  language: en
+
+nav:
+  - Home:
+    - Introduction: index.md
+    - Getting Started: getting_started.md
+
+  - Clients:
+    - Client: sections/clients/client.md
+    - AsyncClient: sections/clients/async_client.md
+
+  - Data Classes:
+    - Home: sections/data_classes/index.md
+    - AIResponse: sections/data_classes/ai_response.md
+    - Joke: sections/data_classes/joke.md
+    - JokeFlags: sections/data_classes/joke_flags.md
+    - Waifu: sections/data_classes/waifu.md
+    - Weather: sections/data_classes/weather.md
+    - WeatherLocation: sections/data_classes/weather_location.md
+    - WeatherForecast: sections/data_classes/weather_forecast.md
+    - CurrentWeather: sections/data_classes/current_weather.md
+
+  - Errors:
+    - Home: sections/errors/index.md
+    - Forbidden: sections/errors/forbidden.md
+    - BadAPIKey: sections/errors/bad_api_key.md
+    - PlanNotAllowed: sections/errors/plan_not_allowed.md
+    - ArgumentError: sections/errors/argument_error.md
+    - UnknownArgument: sections/errors/unknown_argument.md
+    - BadArgument: sections/errors/bad_argument.md
+    - HTTPError: sections/errors/http_error.md
+
+  - Submodules:
+    - utils: sections/submodules/utils.md
+
+  - Topics:
+    - FAQ: sections/topics/faq.md
+    - Warnings: sections/topics/warnings.md
+    - Lists: sections/topics/lists.md
+    - Unique ID: sections/topics/unique_id.md
+
+  - What's new?:
+    - What's new: sections/whats_new.md
+
+extra:
+  homepage: https://github.com/nerdguyahmad/randomstuff.py
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/nerdguyahmad/randomstuff.py
+
+
+
+copyright: Copyright &copy; 2021 - present NerdGuyAhmad
+repo_url: https://github.com/nerdguyahmad/randomstuff.py
+edit_uri: edit/main/docs/
+markdown_extensions:
+  - admonition
+  - pymdownx.tabbed
+  - pymdownx.superfences
