@@ -76,11 +76,7 @@ class BaseClient:
                 'language': kwargs.get('language', 'en')
             }
 
-            if plan == '':
-                response = self._session.get(f'{self._base_url}/ai', params=params)
-            else:
-                response = self._session.get(f'{self._base_url}/{plan}/ai', params=params)
-
+            
         elif self.version == '5':
             params = {
                 'message': message,
@@ -206,23 +202,23 @@ class Client(BaseClient):
             server: The server from which the response should be obtained, Can be either `main` or `backup`
 
             Customisation parameters:
-                - bot_name
-                - bot_master
-                - bot_gender
-                - bot_age
-                - bot_company
-                - bot_location
-                - bot_email
-                - bot_build
-                - bot_birth_year
-                - bot_birth_date
-                - bot_birth_place
-                - bot_favorite_color
-                - bot_favorite_book
-                - bot_favorite_band
-                - bot_favorite_artist
-                - bot_favorite_actress
-                - bot_favorite_actor
+                - name
+                - master
+                - gender
+                - age
+                - company
+                - location
+                - email
+                - build
+                - birth_year
+                - birth_date
+                - birth_place
+                - favorite_color
+                - favorite_book
+                - favorite_band
+                - favorite_artist
+                - favorite_actress
+                - favorite_actor
 
                 All these parameters are used for customistation of responses. They are
                 all optional and their default values can be found at:
@@ -512,7 +508,7 @@ class AsyncClient(Client):
     async close(): Closes the _session.
     
     """
-    def __init__(sself, api_key: str, version: Optional[str] = '5', plan: Optional[str] = None, suppress_warnings: Optional[bool] = False):
+    def __init__(self, api_key: str, version: Optional[str] = '5', plan: Optional[str] = None, suppress_warnings: Optional[bool] = False):
         super().__init__(
             api_key=api_key,
             version=version,
@@ -524,79 +520,6 @@ class AsyncClient(Client):
             self._session.headers.update({'Authorization': self.api_key})
         else:
             self._session.headers.update({'x-api-key': self.api_key})
-    
-    async def _resolve_ai_params(self, message:str, plan:str = '', **kwargs):
-        if not plan in PLANS:
-            raise InvalidPlanError(F"Invalid Plan. Choose from {PLANS}")
-            return
-
-        if self.version == '4':
-            if not kwargs.get('server', 'primary') in SERVERS_V4:
-                raise InvalidServerError(f"Invalid server type Must be one from {SERVERS_V3}.") 
-                return
-
-        if self.version == '5':
-            if not kwargs.get('server', 'main') in SERVERS_V5:
-                raise InvalidServerError(f"Invalid server type choose from {SERVERS_V4}.") 
-                return
-
-        if self.version == '3':
-            params = {
-                'message': message, 
-                'lang': kwargs.get('lang', 'en'), 
-                'type': kwargs.get('type', 'stable'), 
-                'bot_name': kwargs.get('bot_name', 'RSA'), 
-                'dev_name': kwargs.get('dev_name', 'PGamerX'),
-                'unique_id': kwargs.get('unique_id', self._randomised_uid),
-            }
-            
-        elif self.version == '4':
-            params = {
-                'message': message, 
-                'server': kwargs.get('server', 'primary'), 
-                'master': kwargs.get('master', 'PGamerX'), 
-                'bot': kwargs.get('bot', 'RSA'), 
-                'uid': kwargs.get('uid', self._randomised_uid), 
-                'language': kwargs.get('language', 'en')
-            }
-
-            if plan == '':
-                response = self._session.get(f'{self._base_url}/ai', params=params)
-            else:
-                response = self._session.get(f'{self._base_url}/{plan}/ai', params=params)
-
-        elif self.version == '5':
-            params = {
-                'message': message,
-                'server': kwargs.get('server', 'main'),
-                'uid': kwargs.get('uid', self._randomised_uid),
-                'bot_name': kwargs.get('name', 'Random Stuff API'),
-                'bot_master': kwargs.get('master', 'PGamerX'),
-                'bot_gender': kwargs.get('gender', 'Male'),
-                'bot_age': kwargs.get('age', '19'),
-                'bot_company': kwargs.get('company', 'PGamerX Studio'),
-                'bot_location': kwargs.get('location', 'India'),
-                'bot_email': kwargs.get('email', 'admin@pgamerx.com'),
-                'bot_build': kwargs.get('build', 'Public'),
-                'bot_birth_year': kwargs.get('birth_year', '2002'),
-                'bot_birth_date': kwargs.get('birth_year', '1st January 2002'),
-                'bot_birth_place': kwargs.get('birth_place', 'India'),
-                'bot_favorite_color': kwargs.get('favorite_color', 'Blue'),
-                'bot_favorite_book': kwargs.get('favorite_book', 'Harry Potter'),
-                'bot_favorite_band': kwargs.get('favorite_band', 'Imagine Doggos'),
-                'bot_favorite_artist': kwargs.get('favorite_artist', 'Eminem'),
-                'bot_favorite_actress': kwargs.get('favorite_actress', 'Emma Watson'),
-                'bot_favorite_actor': kwargs.get('favorite_actor', 'Jim Carrey')
-            }
-
-        if self.version == '3':
-            url = f"{self._base_url}/{plan+'/' if plan else ''}ai/response"
-        elif self.version == '4':
-            url = f"{self._base_url}/{plan+'/' if plan else ''}/ai"
-        elif self.version == '5':
-            url = f"{self._base_url}/{'premium/'+plan+'/' if plan else ''}/ai"
-
-        return params, url
     
     
     async def __aenter__(self):
@@ -725,7 +648,7 @@ class AsyncClient(Client):
 
         _check_status(response)
 
-        return await response.json()[0]
+        return (await response.json())[0]
 
     async def get_waifu(self, plan: str, type: str = 'any') -> Waifu:
         """
@@ -757,7 +680,7 @@ class AsyncClient(Client):
 
         _check_status(response)
 
-        return Waifu(url=(await response.json()[0]['url']))
+        return Waifu(url=(await response.json())[0]["url"])
 
     async def get_weather(self, city: str) -> Weather:
         '''
