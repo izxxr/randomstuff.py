@@ -8,7 +8,7 @@
     <img src=https://img.shields.io/pypi/dm/randomstuff.py?color=success&label=PyPi%20Downloads&style=flat-square>
     <img src=https://img.shields.io/github/issues/nerdguyahmad/randomstuff.py?color=success&label=Active%20Issues&style=flat-square>
     <img src=https://img.shields.io/badge/License-MIT-informational>
-    <img src=https://img.shields.io/badge/Stable_Version-1.6.0-informational>
+    <img src=https://img.shields.io/badge/Version-2.5.0-informational>
   </p>
   <p align='center'>
     A simple and easy to use, async-ready API wrapper around Random Stuff API.
