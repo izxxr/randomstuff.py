@@ -1,3 +1,6 @@
+## Rewrite branch
+You are currently in rewrite branch which is next major update of this package  Please see [master](https://github.com/nerdguyahmad/randomstuff.py/tree/master) branch if you didn't intend to see the development version.
+
 <div>
   <h1 align='center'>
     randomstuff.py
