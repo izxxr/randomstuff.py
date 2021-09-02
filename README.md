@@ -25,8 +25,12 @@ You are currently in rewrite branch which is next major update of this package  
 
 ## Installation
 Installation can be done easily using the python package manager `pip`
-```bash
-pip install randomstuff.py
+```sh
+python -m pip install -U randomstuff.py
+```
+To install development (potentially unstable) version:
+```sh
+python -m pip install git+https://github.com/nerdguyahmad/randomstuff.py
 ```
 
 ## Quickstart
