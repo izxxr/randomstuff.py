@@ -42,7 +42,7 @@ For async usage, We use [`AsyncClient`](sections/clients/async-client.md) class 
 import randomstuff
 import asyncio
 
-async def coro(self):
+async def coro():
     async with randomstuff.AsyncClient(api_key="api-key") as client:
         response = await client.get_ai_response('Hi there.')
         print(response.message)
