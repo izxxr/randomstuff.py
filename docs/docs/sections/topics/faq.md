@@ -5,7 +5,7 @@ These are some questions that you might have, If your question is not here, Join
 [https://api-info.pgamerx.com/register](https://api-info.pgamerx.com/register) | Steps are pretty straight forward.
 
 ### What version of API should I be using?
-The latest version is always the best. Currently latest version is version 4. To use the latest version, Simply remove `version` kwarg from your Client instance.
+The latest version is always the best. Currently latest version is version 5. To use the latest version, Simply remove `version` kwarg from your Client instance.
 
 ### Why do I get `PlanNotAllowed` error on `get_joke()`, `get_image()` etc. method when I have a plan?
 Plans are only supported in following methods:
