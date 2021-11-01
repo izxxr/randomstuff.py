@@ -91,7 +91,7 @@ class BaseClient:
                 'bot_email': kwargs.get('email', 'admin@pgamerx.com'),
                 'bot_build': kwargs.get('build', 'Public'),
                 'bot_birth_year': kwargs.get('birth_year', '2002'),
-                'bot_birth_date': kwargs.get('birth_year', '1st January 2002'),
+                'bot_birth_date': kwargs.get('birth_date', '1st January 2002'),
                 'bot_birth_place': kwargs.get('birth_place', 'India'),
                 'bot_favorite_color': kwargs.get('favorite_color', 'Blue'),
                 'bot_favorite_book': kwargs.get('favorite_book', 'Harry Potter'),
