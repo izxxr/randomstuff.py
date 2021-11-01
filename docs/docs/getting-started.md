@@ -37,7 +37,7 @@ Some other methods are:
 ## Async usage
 This library also supports async usage to use in asynchrounous enivornments.
 
-For async usage, We use [`AsyncClient`](sections/clients/async_client.md) class which is an async version of `Client` class.
+For async usage, We use [`AsyncClient`](sections/clients/async-client.md) class which is an async version of `Client` class.
 ```py
 import randomstuff
 import asyncio

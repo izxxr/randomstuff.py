@@ -19,4 +19,4 @@ To use the other methods, You will have to use normal API key (API key with no p
 All objects are frozen dataclasses meaning their attributes cannot be changed.
 
 ### What is unique ID?
-Please see the [Unique ID](unique_id.md) page.
+Please see the [Unique ID](unique-id.md) page.
