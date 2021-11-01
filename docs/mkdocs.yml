@@ -2,7 +2,7 @@ site_name: randomstuff.py
 theme:
   name: material
   palette:
-    - accent: green
+    # - accent: green # setting this disables color theme switching for some reason
     - scheme: default
       toggle:
         icon: material/lightbulb
