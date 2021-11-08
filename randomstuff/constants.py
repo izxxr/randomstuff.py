@@ -43,3 +43,24 @@ TWO_IMAGE_METHODS = ["bed", "fuse", "kiss", "slap", "spank"]
 THREE_IMAGE_METHODS = ["distracted"]
 
 FOUR_IMAGE_METHODS = ["changemymind"]
+
+ALL_METHODS = [
+    "affect",
+    "beautiful",
+    "wanted",
+    "delete",
+    "trigger",
+    "facepalm",
+    "blur",
+    "hitler",
+    "jail",
+    "invert",
+    "jokeOverHead",
+    "bed",
+    "fuse",
+    "kiss",
+    "slap",
+    "spank",
+    "distracted",
+    "changemymind",
+]
