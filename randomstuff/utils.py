@@ -45,23 +45,22 @@ def format_joke(joke: Joke, format_as='{setup}... {delivery}'):
 
     if joke.type == 'single':
         return joke
-    else:
-        new_joke = format_as.format(setup=joke.joke['setup'], delivery=joke.joke['delivery'])
-        new_flags = {
-            'nsfw': joke.flags.nsfw,
-            'religious': joke.flags.religious,
-            'political': joke.flags.political,
-            'racist': joke.flags.racist,
-            'sexist': joke.flags.sexist,
-            'explicit': joke.flags.explicit
-        }
+    new_joke = format_as.format(setup=joke.joke['setup'], delivery=joke.joke['delivery'])
+    new_flags = {
+        'nsfw': joke.flags.nsfw,
+        'religious': joke.flags.religious,
+        'political': joke.flags.political,
+        'racist': joke.flags.racist,
+        'sexist': joke.flags.sexist,
+        'explicit': joke.flags.explicit
+    }
 
-        return Joke(
-            category=joke.category,
-            type=joke.type,
-            joke=new_joke,
-            flags=JokeFlags(**new_flags),
-            id=joke.id,
-            safe=joke.safe,
-            lang=joke.lang
-            )
+    return Joke(
+        category=joke.category,
+        type=joke.type,
+        joke=new_joke,
+        flags=JokeFlags(**new_flags),
+        id=joke.id,
+        safe=joke.safe,
+        lang=joke.lang
+        )

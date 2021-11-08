@@ -9,7 +9,6 @@ from ._helper import _check_coro, _check_status, _warn
 from . import utils
 from typing import Optional
 import aiohttp
-import inspect
 import requests
 import random
 
@@ -26,11 +25,9 @@ class BaseClient:
 
         if version in DISCONTINUED_VERSIONS:
             raise DeprecationWarning(f"v{version} has been discontinued. Please use v{VERSIONS[-1]}")
-            return
 
         if not version in VERSIONS:
             raise InvalidVersionError("Invalid API version was provided.")
-            return
 
         self.version = version
         self.api_key = api_key
@@ -44,17 +41,14 @@ class BaseClient:
     def _resolve_ai_params(self, message:str, plan:str = '', **kwargs):
         if not plan in PLANS:
             raise InvalidPlanError(F"Invalid Plan. Choose from {PLANS}")
-            return
 
         if self.version == '4':
             if not kwargs.get('server', 'primary') in SERVERS_V4:
                 raise InvalidServerError(f"Invalid server type Must be one from {SERVERS_V4}.") 
-                return
 
         if self.version == '5':
             if not kwargs.get('server', 'main') in SERVERS_V5:
                 raise InvalidServerError(f"Invalid server type choose from {SERVERS_V4}.") 
-                return
 
         if self.version == '3':
             params = {
@@ -373,11 +367,9 @@ class Client(BaseClient):
 
         if self.version == '3':
             raise InvalidVersionError("Version 3 does not support this method.")
-            return
 
         if not type in WAIFU_TYPES:
             raise InvalidType("Invalid waifu type provided")
-            return
 
         if not plan in PLANS:
             raise InvalidPlanError("The plan provided is invalid.")
@@ -636,7 +628,6 @@ class AsyncClient(Client):
 
         if not type in IMAGE_TYPES:
             raise InvalidType('Invalid image type provided.')
-            return
 
         _check_coro(self)
 
@@ -662,11 +653,9 @@ class AsyncClient(Client):
 
         if self.version == '3':
             raise InvalidVersionError("Version 3 does not support this method.")
-            return
 
         if not type in WAIFU_TYPES:
             raise InvalidType("Invalid waifu type provided")
-            return
 
         if not plan in PLANS:
             raise InvalidPlanError("The plan provided is invalid.")
@@ -692,7 +681,6 @@ class AsyncClient(Client):
         
         if self.version == '3':
             raise InvalidVersionError("Version 3 does not support this method.")
-            return
 
         response = await self._session.get(f"{self._base_url}/weather", params={'city': city})
 

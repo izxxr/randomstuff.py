@@ -27,16 +27,12 @@ def _check_status(response) -> None:
 
     if status == 401:
         raise BadAPIKey(response.text)
-        return
 
     elif status == 403:
         raise PlanNotAllowed(response.text)
-        return
     
     elif status == 429:
         raise RateLimited(response.text)
-        return
 
     elif status >= 500:
         raise HTTPError(f"An error occured while connecting to the API. Returned with status code: {status}", status=status)
-        return

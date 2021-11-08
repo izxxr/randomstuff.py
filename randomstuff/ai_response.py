@@ -1,4 +1,3 @@
-from typing import List, Union, Optional
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
