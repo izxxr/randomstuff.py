@@ -32,7 +32,7 @@ ONE_IMAGE_METHODS = [
     "facepalm",
     "blur",
     "hitler",
-    "kiss",
+    # "kiss", # API Actually expects two image even tho the docs say 1
     "jail",
     "invert",
     "jokeOverHead",
