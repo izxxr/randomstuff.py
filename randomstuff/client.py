@@ -48,7 +48,7 @@ class BaseClient:
 
         if self.version == '4':
             if not kwargs.get('server', 'primary') in SERVERS_V4:
-                raise InvalidServerError(f"Invalid server type Must be one from {SERVERS_V3}.") 
+                raise InvalidServerError(f"Invalid server type Must be one from {SERVERS_V4}.") 
                 return
 
         if self.version == '5':
