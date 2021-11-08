@@ -42,7 +42,7 @@ TWO_IMAGE_METHODS = ["bed", "fuse", "kiss", "slap", "spank"]
 
 THREE_IMAGE_METHODS = ["distracted"]
 
-FOUR_IMAGE_METHODS = ["changemymind"]
+TEXT_METHODS = ["changemymind"]
 
 ALL_METHODS = [
     "affect",
