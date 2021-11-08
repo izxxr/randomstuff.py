@@ -22,3 +22,24 @@ DISCONTINUED_VERSIONS = ["2"]  # Order: oldest -> newest
 
 SERVERS_V4 = ["primary", "backup", "unstable"]
 SERVERS_V5 = ["main", "backup"]
+
+ONE_IMAGE_METHODS = [
+    "affect",
+    "beautiful",
+    "wanted",
+    "delete",
+    "trigger",
+    "facepalm",
+    "blur",
+    "hitler",
+    "kiss",
+    "jail",
+    "invert",
+    "jokeOverHead",
+]
+
+TWO_IMAGE_METHODS = ["bed", "fuse", "kiss", "slap", "spank"]
+
+THREE_IMAGE_METHODS = ["distracted"]
+
+FOUR_IMAGE_METHODS = ["changemymind"]
