@@ -770,7 +770,28 @@ class AsyncClient(Client):
                     ),
                 )
             )
-    
+
+    async def canvas(
+        self,
+        method: str,
+        *, img1: str = None,
+        img2: str = None,
+        img3: str = None,
+        txt: str = None,
+        save_to: str = None
+    ):
+        _validate_method_image(method.lower(), img1=img1, img2=img2, img3=img3, txt=txt)
+        query = _image_query_params(method.lower(), img1=img1, img2=img2, img3=img3, txt=txt)
+        response = await self._session.post(f"{self._base_url}/canvas", params=query)
+        _check_status(response)
+        json = await response.json()[0]
+        base = json["base64"]
+        b64 = base64.b64decode(base)
+        if file := save_to:
+            return open(file, "wb").write(b64)
+        else:
+            return io.BytesIO(b64)
+
     async def close(self):
         """
         This function is a coroutine
