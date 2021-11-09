@@ -81,3 +81,15 @@ def _validate_method_image(method, **kwargs):
         raise ValueError(f"img1, img2 and img3 are required for method {method}")
     if (images == 4) and (txt is None):
         raise ValueError(f"txt is required for method {method}")
+
+def _image_query_params(method, *, img1: str = None, img2: str = None, img3: str = None, txt: str = None):
+    images = _get_method_images(method)
+    query = {"method" : method}
+    data = {
+        1: {"img1": img1},
+        2: {"img1": img1, "img2": img2},
+        3: {"img1": img1, "img2": img2, "img3": img3},
+        4: {"txt": txt}
+    }
+    query.update(data[images])
+    return query
