@@ -9,7 +9,8 @@ from ._helper import (_check_coro,
                       _check_status,
                       _warn,
                       _validate_method_image,
-                      _get_method_images
+                      _get_method_images,
+                      _image_query_params
                       )
 from . import utils
 from typing import Optional
@@ -494,15 +495,7 @@ class Client(BaseClient):
         save_to: str = None
     ):
         _validate_method_image(method.lower(), img1=img1, img2=img2, img3=img3, txt=txt)
-        images = _get_method_images(method)
-        query = {"method" : method}
-        data = {
-            1: {"img1": img1},
-            2: {"img1": img1, "img2": img2},
-            3: {"img1": img1, "img2": img2, "img3": img3},
-            4: {"txt": txt}
-        }
-        query.update(data[images])
+        query = _image_query_params(method.lower(), img1=img1, img2=img2, img3=img3, txt=txt)
         response = self._session.post(f"{self._base_url}/canvas", params=query)
         _check_status(response)
         json = response.json()[0]
