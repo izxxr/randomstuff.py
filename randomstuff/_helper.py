@@ -50,6 +50,7 @@ def _check_status(response) -> None:
             status=status,
         )
 
+
 def _get_method_images(method: str):
     final = {key: 1 for key in ONE_IMAGE_METHODS}
     for key in TWO_IMAGE_METHODS:
@@ -59,6 +60,7 @@ def _get_method_images(method: str):
     for key in TEXT_METHODS:
         final[key] = 4
     return final[method]
+
 
 def _validate_method_image(method, **kwargs):
     if method not in ALL_METHODS:
@@ -77,19 +79,29 @@ def _validate_method_image(method, **kwargs):
         raise ValueError(f"img1 is required for method {method}")
     if (images == 2) and (not all([img1, img2])):
         raise ValueError(f"img1 and img2 are required for method {method}")
-    if (images == 3) and (not all([img1, img2. img3])):
-        raise ValueError(f"img1, img2 and img3 are required for method {method}")
+    if (images == 3) and (not all([img1, img2.img3])):
+        raise ValueError(
+            f"img1, img2 and img3 are required for method {method}"
+        )
     if (images == 4) and (txt is None):
         raise ValueError(f"txt is required for method {method}")
 
-def _image_query_params(method, *, img1: str = None, img2: str = None, img3: str = None, txt: str = None):
+
+def _image_query_params(
+    method,
+    *,
+    img1: str = None,
+    img2: str = None,
+    img3: str = None,
+    txt: str = None,
+):
     images = _get_method_images(method)
-    query = {"method" : method}
+    query = {"method": method}
     data = {
         1: {"img1": img1},
         2: {"img1": img1, "img2": img2},
         3: {"img1": img1, "img2": img2, "img3": img3},
-        4: {"txt": txt}
+        4: {"txt": txt},
     }
     query.update(data[images])
     return query

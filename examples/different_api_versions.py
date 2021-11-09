@@ -8,7 +8,9 @@ If you have a program running the API version 3, Please read migration guide on 
 """
 import randomstuff
 
-with randomstuff.Client(key="api-key-here", version="4") as client: # Pass in API version in version argument. Choose one from 2 or 3 or 4 (v4 is beta).
+with randomstuff.Client(
+    key="api-key-here", version="4"
+) as client:  # Pass in API version in version argument. Choose one from 2 or 3 or 4 (v4 is beta).
 
-  """Put your rest of code here. You have to change nothing when changing API versions. Wrapper deals with that itself."""
-  ...
+    """Put your rest of code here. You have to change nothing when changing API versions. Wrapper deals with that itself."""
+    ...
