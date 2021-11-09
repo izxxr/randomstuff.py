@@ -5,12 +5,19 @@ from .ai_response import *
 from .joke import *
 from .waifu import *
 from .weather import *
-from ._helper import _check_coro, _check_status, _warn
+from ._helper import (_check_coro,
+                      _check_status,
+                      _warn,
+                      _validate_method_image,
+                      _get_method_images
+                      )
 from . import utils
 from typing import Optional
 import aiohttp
 import requests
 import random
+import base64
+import io
 
 class BaseClient:
     """Represents the base of both synchronus and asynchronous clients.
@@ -476,6 +483,35 @@ class Client(BaseClient):
                     ),
                 )
             )
+
+    def canvas(
+        self,
+        method: str,
+        *, img1: str = None,
+        img2: str = None,
+        img3: str = None,
+        txt: str = None,
+        save_to: str = None
+    ):
+        _validate_method_image(method.lower(), img1=img1, img2=img2, img3=img3, txt=txt)
+        images = _get_method_images(method)
+        query = {"method" : method}
+        data = {
+            1: {"img1": img1},
+            2: {"img1": img1, "img2": img2},
+            3: {"img1": img1, "img2": img2, "img3": img3},
+            4: {"txt": txt}
+        }
+        query.update(data[images])
+        response = self._session.post(f"{self._base_url}/canvas", params=query)
+        _check_status(response)
+        json = response.json()[0]
+        base = json["base64"]
+        b64 = base64.b64decode(base)
+        if file := save_to:
+            return open(file, "wb").write(b64)
+        else:
+            return io.BytesIO(b64)
 
     def close(self):
         """Closes the _session"""
