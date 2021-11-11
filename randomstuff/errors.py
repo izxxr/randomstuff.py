@@ -4,18 +4,24 @@ class HTTPError(Exception):
     This usually indicates that library couldn't establish a connection with base URL (or API). This is raised
     when API is has something wrong.
     """
+
     def __init__(self, message, status):
         super().__init__(message)
         self.message = message
         self.status = status
 
+
 class ArgumentError(Exception):
     """Super class for argument related errors"""
+
     pass
+
 
 class InvalidType(Exception):
     """Raised upon invalid (unsupported) type of parameter provided"""
+
     pass
+
 
 class InvalidVersionError(ArgumentError):
     """
@@ -24,13 +30,17 @@ class InvalidVersionError(ArgumentError):
 
     Raised upon invalid version passed
     """
+
     pass
+
 
 class UnsupportedOperation(Exception):
     """
     Raised upon using AsyncClient class in a synchronous context manager
     """
+
     pass
+
 
 class InvalidPlanError(InvalidType):
     """
@@ -39,7 +49,9 @@ class InvalidPlanError(InvalidType):
 
     Raised upon invalid plan passed
     """
+
     pass
+
 
 class InvalidServerError(InvalidType):
     """
@@ -48,7 +60,9 @@ class InvalidServerError(InvalidType):
 
     Raised upon invalid server passed
     """
+
     pass
+
 
 class InvalidCityError(Exception):
     """
@@ -57,12 +71,15 @@ class InvalidCityError(Exception):
 
     Raised upon invalid city passed in get_weather method.
     """
+
     pass
 
 
 class Forbidden(Exception):
     """Super class for 403, 401 and other related status codes."""
+
     pass
+
 
 class PlanNotAllowed(Exception):
     """
@@ -70,9 +87,11 @@ class PlanNotAllowed(Exception):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Raised when the plan provided is not allowed on the API key. This is usually because you don't have that plan
-    bought. 
+    bought.
     """
+
     pass
+
 
 class BadAPIKey(Exception):
     """
@@ -81,7 +100,9 @@ class BadAPIKey(Exception):
 
     Raised when the API key provided is not valid.
     """
+
     pass
+
 
 class RateLimited(Exception):
     """
@@ -90,4 +111,5 @@ class RateLimited(Exception):
 
     Raised when the API key is being Rate Limited.
     """
+
     pass

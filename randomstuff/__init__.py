@@ -26,6 +26,5 @@ __version__ = '2.5.0a'
 __license__ = 'MIT'
 __copyright__ = '2021-present nerdguyahmad.'
 
-
-
-
+def get_version():
+    return __version__

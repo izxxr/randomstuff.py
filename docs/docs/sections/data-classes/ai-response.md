@@ -14,4 +14,4 @@ Represents the response returned in `Client.get_ai_response()` method.
     | `server`    | The [AI server](../topics/lists.md#ai-servers) to use. Default is `primary`.  | Optional[`str`] |
     | `master`    | The bot's master AKA creator, This is used in responses. | Optional[`str`] |
     | `bot`    | The bot's name, This is used in responses. | Optional[`str`] |
-    | `uid`    | The [Unique ID](../topics/unique_id.md) to use. | Optional[`str`] |
+    | `uid`    | The [Unique ID](../topics/unique-id.md) to use. | Optional[`str`] |

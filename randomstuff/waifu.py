@@ -1,6 +1,7 @@
 from typing import List, Union, Optional
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class Waifu:
     """
@@ -8,11 +9,9 @@ class Waifu:
 
     Attributes
     ----------
-    
+
       url : str
         The URL to waifu image.
     """
-    url : str = None
-    
 
-    
+    url: str = None

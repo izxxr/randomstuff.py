@@ -1,10 +1,10 @@
-from typing import List, Union, Optional
 from dataclasses import dataclass
+
 
 @dataclass(frozen=True)
 class AIResponse:
     """Represents an AI response returned from `get_ai_response` method.
-    
+
     Attribues
     ---------
 
@@ -33,7 +33,7 @@ class AIResponse:
     # All versions
     message: str = None
     response: str = message
-    
+
     # Version 3
     success: bool = None
     api_key: str = None

@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
+
 @dataclass(frozen=True)
 class WeatherLocation:
-    '''
+    """
     Represents the location of the weather.
 
     Attributes
@@ -14,7 +15,7 @@ class WeatherLocation:
 
       lat : str
         The latitude of the location.
-    
+
       long : str
         The longitude of the location.
 
@@ -35,13 +36,14 @@ class WeatherLocation:
 
       longitude : str
         An alias for `long` attribute
-    
+
       degree_type : str
         An alias for `degreetype` attribute.
 
       image_relative_url : str
         An alias for `imagerelativeurl` attribute.
-    '''
+    """
+
     name: str = None
     lat: str = None
     long: str = None
@@ -59,7 +61,7 @@ class WeatherLocation:
 
 @dataclass(frozen=True)
 class CurrentWeather:
-    '''
+    """
     Represents the current weather of the weather object.
 
     Attributes
@@ -82,7 +84,7 @@ class CurrentWeather:
 
       shortday : str
         The short-form of `day` attribute. For example, if `day` attribute is "Saturday" the `shortday` will be "Sat"
-    
+
       observationtime : str
         The time of observation.
 
@@ -97,7 +99,7 @@ class CurrentWeather:
 
       winddisplay : str
         The wind display.
-    
+
       windspeed : str
         The speed of wind.
 
@@ -127,7 +129,8 @@ class CurrentWeather:
 
       imageURL, image_url, imageurl : str
         Aliases for `imageUrl` attribute.
-    '''
+    """
+
     temperature: str = None
     skycode: str = None
     skytext: str = None
@@ -155,9 +158,10 @@ class CurrentWeather:
     imageURL: str = imageUrl
     imageurl: str = imageUrl
 
+
 @dataclass(frozen=True)
 class WeatherForecast:
-    '''
+    """
     Represents the forecast of the weather object.
 
     Attributes
@@ -183,7 +187,7 @@ class WeatherForecast:
 
       shortday : str
         The short-form of `day` attribute. For example, if `day` attribute is "Saturday" the `shortday` will be "Sat"
-    
+
       precip : str
         The precipitation of forecast.
 
@@ -199,7 +203,8 @@ class WeatherForecast:
       precipitation : str
         An alias for `precip` attribute.
 
-    '''
+    """
+
     low: str = None
     high: str = None
     skycodeday: str = None
@@ -215,9 +220,10 @@ class WeatherForecast:
     short_day: str = shortday
     precipitation: str = precip
 
+
 @dataclass(frozen=True)
 class Weather:
-    '''
+    """
     Represents the weather returned by API.
 
     Attributes
@@ -231,7 +237,8 @@ class Weather:
 
       forecast : List[WeatherForecast]
         The list of weather forecast of different days.
-    '''
+    """
+
     location: WeatherLocation = None
     current: Optional[CurrentWeather] = None
     forecast: List[WeatherForecast] = None

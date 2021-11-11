@@ -29,12 +29,14 @@ class JokeFlags:
         Determines if the joke is marked explicit or not.
 
     """
+
     nsfw: bool = None
     religious: bool = None
     political: bool = None
     racist: bool = None
     sexist: bool = None
     explicit: bool = None
+
 
 @dataclass(frozen=True)
 class Joke:
@@ -46,7 +48,7 @@ class Joke:
 
       category : str
         The category of joke.
-      
+
       type : str
         The type of joke.
 
@@ -62,7 +64,7 @@ class Joke:
 
       safe : bool
         Determines if the joke is marked safe or not.
-      
+
       lang : str
         The language of the joke
 
@@ -70,6 +72,7 @@ class Joke:
         An alias for `lang` attribute
 
     """
+
     category: str = None
     type: str = None
     joke: Union[str, dict] = None

@@ -3,7 +3,7 @@
 The main client class to make API calls.
 
 !!! warning "Non-async class"
-    All functions in this class are blocking meaning they are not suitable for async programs like Discord bots etc. Please have a look at [`AsyncClient`](async_client.md)
+    All functions in this class are blocking meaning they are not suitable for async programs like Discord bots etc. Please have a look at [`AsyncClient`](async-client.md)
 
 === "Parameters/Attributes"
     
@@ -43,7 +43,7 @@ The main client class to make API calls.
             | `server`    | The [AI server](../topics/lists.md#ai-servers) to use. Default is `primary`.  | Optional[`str`] |
             | `master`    | The bot's master AKA creator, This is used in responses. | Optional[`str`] |
             | `bot`    | The bot's name, This is used in responses. | Optional[`str`] |
-            | `uid`    | The [Unique ID](../topics/unique_id.md) to use. | Optional[`str`] |
+            | `uid`    | The [Unique ID](../topics/unique-id.md) to use. | Optional[`str`] |
 
 
         === "Parameters (Version 3)"
@@ -55,10 +55,10 @@ The main client class to make API calls.
             | `type`    | The type of AI response. Either `stable` or `unstable`  | Optional[`str`] |
             | `dev_name`    | The bot's dev AKA creator, This is used in responses. | Optional[`str`] |
             | `bot_name`    | The bot's name, This is used in responses. | Optional[`str`] |
-            | `unqiue_id`    | The [Unique ID](../topics/unique_id.md) to use. | Optional[`str`] |
+            | `unqiue_id`    | The [Unique ID](../topics/unique-id.md) to use. | Optional[`str`] |
 
         === "Returns"
-            - [`AIResponse`](../data_classes/ai_response.md) : The obtained response.
+            - [`AIResponse`](../data-classes/ai-response.md) : The obtained response.
 
     * ### **`get_image(type: str = 'any')`**
 
