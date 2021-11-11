@@ -2,7 +2,7 @@ site_name: randomstuff.py
 theme:
   name: material
   palette:
-    - accent: green
+    # - accent: green # setting this disables color theme switching for some reason
     - scheme: default
       toggle:
         icon: material/lightbulb
@@ -31,32 +31,32 @@ theme:
 nav:
   - Home:
     - Introduction: index.md
-    - Getting Started: getting_started.md
+    - Getting Started: getting-started.md
 
   - Clients:
     - Client: sections/clients/client.md
-    - AsyncClient: sections/clients/async_client.md
+    - AsyncClient: sections/clients/async-client.md
 
   - Data Classes:
-    - Home: sections/data_classes/index.md
-    - AIResponse: sections/data_classes/ai_response.md
-    - Joke: sections/data_classes/joke.md
-    - JokeFlags: sections/data_classes/joke_flags.md
-    - Waifu: sections/data_classes/waifu.md
-    - Weather: sections/data_classes/weather.md
-    - WeatherLocation: sections/data_classes/weather_location.md
-    - WeatherForecast: sections/data_classes/weather_forecast.md
-    - CurrentWeather: sections/data_classes/current_weather.md
+    - Home: sections/data-classes/index.md
+    - AIResponse: sections/data-classes/ai-response.md
+    - Joke: sections/data-classes/joke.md
+    - JokeFlags: sections/data-classes/joke-flags.md
+    - Waifu: sections/data-classes/waifu.md
+    - Weather: sections/data-classes/weather.md
+    - WeatherLocation: sections/data-classes/weather-location.md
+    - WeatherForecast: sections/data-classes/weather-forecast.md
+    - CurrentWeather: sections/data-classes/current-weather.md
 
   - Errors:
     - Home: sections/errors/index.md
     - Forbidden: sections/errors/forbidden.md
-    - BadAPIKey: sections/errors/bad_api_key.md
-    - PlanNotAllowed: sections/errors/plan_not_allowed.md
-    - ArgumentError: sections/errors/argument_error.md
-    - UnknownArgument: sections/errors/unknown_argument.md
-    - BadArgument: sections/errors/bad_argument.md
-    - HTTPError: sections/errors/http_error.md
+    - BadAPIKey: sections/errors/bad-api-key.md
+    - PlanNotAllowed: sections/errors/plan-not-allowed.md
+    - ArgumentError: sections/errors/argument-error.md
+    - UnknownArgument: sections/errors/unknown-argument.md
+    - BadArgument: sections/errors/bad-argument.md
+    - HTTPError: sections/errors/http-error.md
 
   - Submodules:
     - utils: sections/submodules/utils.md
@@ -65,10 +65,10 @@ nav:
     - FAQ: sections/topics/faq.md
     - Warnings: sections/topics/warnings.md
     - Lists: sections/topics/lists.md
-    - Unique ID: sections/topics/unique_id.md
+    - Unique ID: sections/topics/unique-id.md
 
   - What's new?:
-    - What's new: sections/whats_new.md
+    - What's new: sections/whats-new.md
 
 extra:
   homepage: https://github.com/nerdguyahmad/randomstuff.py

@@ -14,16 +14,18 @@ from .constants import *
 from .errors import *
 from .joke import *
 from .waifu import *
+
 # To use randomstuff.utils module import it manually.
 
-__title__ = 'randomstuff.py'
-__summary__ = 'An easy to use and feature rich wrapper for Random Stuff API'
-__uri__ = 'https://github.com/nerdguyahmad/randomstuff.py'
-__email__ = 'nerdguyahmad.contact@gmail.com'
-__author__ = 'nerdguyahmad'
-__version__ = '2.0.0a'
-__license__ = 'MIT'
-__copyright__ = '2021-present nerdguyahmad.'
+__title__ = "randomstuff.py"
+__summary__ = "An easy to use and feature rich wrapper for Random Stuff API"
+__uri__ = "https://github.com/nerdguyahmad/randomstuff.py"
+__email__ = "nerdguyahmad.contact@gmail.com"
+__author__ = "nerdguyahmad"
+__version__ = "2.0.0a"
+__license__ = "MIT"
+__copyright__ = "2021-present nerdguyahmad."
+
 
 def get_version():
-	return __version__
+    return __version__
