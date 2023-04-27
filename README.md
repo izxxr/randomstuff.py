@@ -1,3 +1,6 @@
+## Development Notice
+As of April 2023, due to lack of activity and maintanence of Random Stuff API and busy schedule of the maintainer of this package, this package is not being maintained and is not likely to work for the newer (or even older) versions of API.
+
 <div>
   <h1 align='center'>
     randomstuff.py
